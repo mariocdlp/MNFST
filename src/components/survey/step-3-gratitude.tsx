@@ -45,7 +45,7 @@ export function Step3Gratitude() {
         value={surveyData.gratitude_self}
         onChange={(e) => updateSurvey({ gratitude_self: e.target.value })}
         placeholder="e.g., My persistence — I keep going even when it's hard"
-        hint="This becomes a self-appreciation anchor in your video"
+        hint="This becomes a self-appreciation anchor in your content"
       />
 
       <ScienceTooltip

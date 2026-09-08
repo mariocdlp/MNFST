@@ -69,7 +69,7 @@ export function Step5Implementation() {
         onChange={(e) => updateSurvey({ ideal_routine: e.target.value })}
         placeholder="Walk me through a day — morning to night. e.g., I wake up at 6:30, meditate for 10 minutes, then write for an hour before breakfast..."
         rows={4}
-        hint="This creates the action montage scenes in your video"
+        hint="This becomes your daily pledge and your morning nudge"
       />
 
       <ScienceTooltip

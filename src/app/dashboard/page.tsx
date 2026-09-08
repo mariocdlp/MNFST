@@ -1,547 +1,431 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { format, subDays } from "date-fns";
+import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
+import { format, isToday, subDays } from "date-fns";
 import { Navbar } from "@/components/layout/navbar";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { NotificationSettings } from "@/components/dashboard/notification-settings";
 import { createClient } from "@/lib/supabase/client";
 import { useAppStore } from "@/lib/store";
-import type { ActionPledge, ActionCompletion, Video, Streak, SurveyData } from "@/types";
+import { ACTION_LABELS } from "@/lib/pledges";
+import type { ActionPledge, CompletionStatus, FeedCard, Streak, SurveyData } from "@/types";
+
+type Tab = "today" | "saved" | "settings";
+
+interface DayCell {
+  date: Date;
+  complete: boolean;
+  partial: boolean;
+}
 
 interface DashboardData {
-  latestVideo: Video | null;
-  surveyData: SurveyData | null;
+  redirect?: string;
+  survey: SurveyData | null;
+  streak: Streak | null;
   pledges: ActionPledge[];
-  todayCompletions: ActionCompletion[];
-  streak: Streak;
-  weekCompletions: Record<string, boolean>; // date string -> all done
+  today: Record<string, CompletionStatus>;
+  week: DayCell[];
+  saved: FeedCard[];
+}
+
+function emptyWeek(): DayCell[] {
+  return Array.from({ length: 7 }, (_, index) => ({
+    date: subDays(new Date(), 6 - index),
+    complete: false,
+    partial: false,
+  }));
+}
+
+async function loadDashboard(): Promise<DashboardData> {
+  const empty: DashboardData = {
+    survey: null,
+    streak: null,
+    pledges: [],
+    today: {},
+    week: emptyWeek(),
+    saved: [],
+  };
+
+  const supabase = createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return empty;
+
+  const todayKey = format(new Date(), "yyyy-MM-dd");
+  const weekStart = format(subDays(new Date(), 6), "yyyy-MM-dd");
+
+  const [{ data: surveyRow }, { data: pledgeRows }, { data: streakRow }] = await Promise.all([
+    supabase
+      .from("survey_responses")
+      .select("response_data")
+      .eq("user_id", authUser.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from("action_pledges")
+      .select("*")
+      .eq("user_id", authUser.id)
+      .eq("is_active", true)
+      .order("pledged_at", { ascending: true }),
+    supabase.from("streaks").select("*").eq("user_id", authUser.id).maybeSingle(),
+  ]);
+
+  if (!surveyRow) return { ...empty, redirect: "/survey" };
+
+  const pledges = (pledgeRows ?? []) as ActionPledge[];
+  const result: DashboardData = {
+    ...empty,
+    survey: surveyRow.response_data as SurveyData,
+    streak: streakRow as Streak | null,
+    pledges,
+  };
+
+  if (pledges.length > 0) {
+    const pledgeIds = pledges.map((pledge) => pledge.id);
+    const { data: completions } = await supabase
+      .from("action_completions")
+      .select("pledge_id, date, status")
+      .in("pledge_id", pledgeIds)
+      .gte("date", weekStart);
+
+    const rows = (completions ?? []) as {
+      pledge_id: string;
+      date: string;
+      status: CompletionStatus;
+    }[];
+
+    result.today = Object.fromEntries(
+      rows.filter((row) => row.date === todayKey).map((row) => [row.pledge_id, row.status])
+    );
+
+    result.week = emptyWeek().map((cell) => {
+      const key = format(cell.date, "yyyy-MM-dd");
+      const onDay = rows.filter((row) => row.date === key);
+      const done = onDay.filter((row) => row.status === "done").length;
+      return { ...cell, complete: done >= pledgeIds.length, partial: onDay.length > 0 && done < pledgeIds.length };
+    });
+  }
+
+  const savedResponse = await fetch("/api/feed/saved");
+  if (savedResponse.ok) {
+    result.saved = (await savedResponse.json()).cards;
+  }
+
+  return result;
 }
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const user = useAppStore((s) => s.user);
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [completingId, setCompletingId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"today" | "settings">("today");
+  // useSearchParams needs a boundary: the shell renders while the tab resolves.
+  return (
+    <Suspense fallback={<DashboardSkeleton />}>
+      <Dashboard />
+    </Suspense>
+  );
+}
 
-  useEffect(() => {
-    if (!user) return;
-    loadDashboard();
-  }, [user]);
-
-  async function loadDashboard() {
-    const supabase = createClient();
-    const { data: { user: authUser } } = await supabase.auth.getUser();
-    if (!authUser) { router.push("/auth/login"); return; }
-
-    const today = format(new Date(), "yyyy-MM-dd");
-
-    // Load all dashboard data in parallel
-    const [videosRes, pledgesRes, streakRes, completionsRes] = await Promise.all([
-      supabase
-        .from("videos")
-        .select("*, survey_responses(response_data)")
-        .eq("user_id", authUser.id)
-        .order("created_at", { ascending: false })
-        .limit(1),
-      supabase
-        .from("action_pledges")
-        .select("*")
-        .eq("user_id", authUser.id)
-        .eq("is_active", true),
-      supabase
-        .from("streaks")
-        .select("*")
-        .eq("user_id", authUser.id)
-        .single(),
-      supabase
-        .from("action_completions")
-        .select("*")
-        .eq("date", today)
-        .in(
-          "pledge_id",
-          (await supabase
-            .from("action_pledges")
-            .select("id")
-            .eq("user_id", authUser.id)
-            .eq("is_active", true)
-          ).data?.map((p: { id: string }) => p.id) ?? []
-        ),
-    ]);
-
-    // Build 7-day week completion map
-    const weekDates = Array.from({ length: 7 }, (_, i) =>
-      format(subDays(new Date(), 6 - i), "yyyy-MM-dd")
-    );
-    const pledgeIds = pledgesRes.data?.map((p: ActionPledge) => p.id) ?? [];
-    let weekCompletions: Record<string, boolean> = {};
-
-    if (pledgeIds.length > 0) {
-      const { data: weekComp } = await supabase
-        .from("action_completions")
-        .select("date, pledge_id")
-        .in("pledge_id", pledgeIds)
-        .in("date", weekDates)
-        .eq("status", "done");
-
-      // A day is "complete" if all active pledges have a completion entry
-      for (const date of weekDates) {
-        const completedOnDay = (weekComp ?? []).filter(
-          (c: { date: string }) => c.date === date
-        ).length;
-        weekCompletions[date] = completedOnDay >= pledgeIds.length && pledgeIds.length > 0;
-      }
-    } else {
-      for (const date of weekDates) weekCompletions[date] = false;
-    }
-
-    const latestVideo = videosRes.data?.[0] ?? null;
-    const surveyData = latestVideo?.survey_responses?.response_data ?? null;
-
-    setData({
-      latestVideo,
-      surveyData,
-      pledges: pledgesRes.data ?? [],
-      todayCompletions: completionsRes.data ?? [],
-      streak: streakRes.data ?? { user_id: authUser.id, current_streak: 0, longest_streak: 0, last_completion_date: null },
-      weekCompletions,
-    });
-    setLoading(false);
-  }
-
-  async function markComplete(pledgeId: string, status: "done" | "skipped") {
-    setCompletingId(pledgeId);
-    const supabase = createClient();
-    const today = format(new Date(), "yyyy-MM-dd");
-
-    await supabase.from("action_completions").upsert({
-      pledge_id: pledgeId,
-      date: today,
-      status,
-      completed_at: new Date().toISOString(),
-    }, { onConflict: "pledge_id,date" });
-
-    // Recalculate streak via API
-    await fetch("/api/actions/streak", { method: "POST" });
-
-    await loadDashboard();
-    setCompletingId(null);
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  // No video yet — show welcome / start flow
-  if (!data?.latestVideo) {
-    return (
-      <div className="min-h-screen">
-        <Navbar />
-        <div className="max-w-2xl mx-auto px-4 pt-32 pb-16 text-center space-y-8">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-3xl font-bold">
-              Welcome{user?.name ? `, ${user.name.split(" ")[0]}` : ""}
-            </h1>
-            <p className="text-muted mt-3 text-lg max-w-md mx-auto">
-              You have <span className="text-accent font-semibold">{user?.credits_remaining ?? 3} free videos</span> waiting.
-              It takes 5 minutes to tell us your dream.
-            </p>
-          </motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-            <Link href="/survey">
-              <Button size="lg" className="px-10">
-                Create Your First Video
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </div>
-    );
-  }
-
-  const { latestVideo, surveyData, pledges, todayCompletions, streak, weekCompletions } = data;
-  const today = format(new Date(), "yyyy-MM-dd");
-  const weekDates = Array.from({ length: 7 }, (_, i) => subDays(new Date(), 6 - i));
-
+function DashboardSkeleton() {
   return (
     <div className="min-h-screen">
       <Navbar />
-
-      <div className="max-w-4xl mx-auto px-4 pt-24 pb-16 space-y-8">
-
-        {/* Identity banner */}
-        {surveyData?.future_identity && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-6 px-4 rounded-2xl bg-gradient-to-r from-accent/10 via-purple-500/5 to-accent/10 border border-accent/20"
-          >
-            <p className="text-xs uppercase tracking-[0.2em] text-accent mb-2">Your Identity</p>
-            <p className="text-xl font-bold gradient-text leading-snug">
-              &ldquo;{surveyData.future_identity}&rdquo;
-            </p>
-          </motion.div>
-        )}
-
-        {/* Tabs */}
-        <div className="flex gap-2">
-          {(["today", "settings"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors cursor-pointer capitalize ${
-                activeTab === tab
-                  ? "bg-accent text-white"
-                  : "bg-surface text-muted hover:text-foreground border border-border"
-              }`}
-            >
-              {tab === "today" ? "Today" : "Settings"}
-            </button>
-          ))}
-        </div>
-
-        {activeTab === "today" && (
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Main column */}
-            <div className="md:col-span-2 space-y-6">
-
-              {/* Today's Actions */}
-              <Card>
-                <h2 className="text-lg font-semibold mb-4">Today&apos;s Actions</h2>
-                {pledges.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-muted text-sm">No active pledges yet.</p>
-                    {latestVideo?.status === "completed" && (
-                      <Link href={`/plan/${latestVideo.id}`}>
-                        <Button size="sm" className="mt-3">Create Action Plan</Button>
-                      </Link>
-                    )}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {pledges.map((pledge) => {
-                      const completion = todayCompletions.find((c) => c.pledge_id === pledge.id);
-                      const isDone = completion?.status === "done";
-                      const isSkipped = completion?.status === "skipped";
-                      return (
-                        <div
-                          key={pledge.id}
-                          className={`p-4 rounded-xl border transition-colors ${
-                            isDone ? "border-success/30 bg-success/5"
-                            : isSkipped ? "border-border/50 bg-surface opacity-60"
-                            : "border-border bg-surface-light"
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="flex-1">
-                              <p className="text-xs uppercase tracking-wider text-muted mb-1">
-                                {pledge.action_type.replace(/_/g, " ")}
-                              </p>
-                              <p className={`text-sm font-medium ${isDone ? "line-through text-muted" : ""}`}>
-                                {pledge.action_text}
-                              </p>
-                            </div>
-                            {!completion ? (
-                              <div className="flex gap-2 shrink-0">
-                                <button
-                                  onClick={() => markComplete(pledge.id, "done")}
-                                  disabled={completingId === pledge.id}
-                                  className="p-1.5 rounded-lg bg-success/10 hover:bg-success/20 text-success transition-colors cursor-pointer disabled:opacity-50"
-                                >
-                                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                </button>
-                                <button
-                                  onClick={() => markComplete(pledge.id, "skipped")}
-                                  disabled={completingId === pledge.id}
-                                  className="p-1.5 rounded-lg bg-surface hover:bg-border text-muted transition-colors cursor-pointer disabled:opacity-50"
-                                >
-                                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                </button>
-                              </div>
-                            ) : (
-                              <span className={`text-xs font-medium px-2 py-1 rounded-lg ${
-                                isDone ? "bg-success/10 text-success" : "bg-border text-muted"
-                              }`}>
-                                {isDone ? "Done" : "Skipped"}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </Card>
-
-              {/* Weekly progress grid */}
-              <Card>
-                <h2 className="text-lg font-semibold mb-4">This Week</h2>
-                <div className="grid grid-cols-7 gap-2">
-                  {weekDates.map((date) => {
-                    const dateStr = format(date, "yyyy-MM-dd");
-                    const isToday = dateStr === today;
-                    const isDone = weekCompletions[dateStr];
-                    return (
-                      <div key={dateStr} className="flex flex-col items-center gap-1.5">
-                        <span className="text-xs text-muted">{format(date, "EEE")}</span>
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-medium transition-colors ${
-                          isDone ? "bg-success/20 text-success border border-success/30"
-                          : isToday ? "bg-accent/10 border-2 border-accent text-accent"
-                          : "bg-surface border border-border text-muted"
-                        }`}>
-                          {isDone ? (
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                          ) : (
-                            format(date, "d")
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </Card>
-
-              {/* Video card */}
-              {latestVideo && (
-                <Card>
-                  <h2 className="text-lg font-semibold mb-4">Your Video</h2>
-                  <div className="flex gap-4 items-center">
-                    <div className="w-24 h-16 rounded-xl bg-gradient-to-br from-accent/20 to-purple-900/30 flex items-center justify-center shrink-0">
-                      <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {surveyData?.goal_categories?.map(c => c.replace(/_/g, " ")).join(", ") ?? "Manifestation Video"}
-                      </p>
-                      <p className="text-xs text-muted mt-0.5">
-                        {latestVideo.status === "completed" ? "Ready to watch" : `Status: ${latestVideo.status}`}
-                      </p>
-                    </div>
-                    <div className="flex gap-2 shrink-0">
-                      {latestVideo.status === "completed" && (
-                        <Link href={`/watch/${latestVideo.id}`}>
-                          <Button size="sm" variant="secondary">Rewatch</Button>
-                        </Link>
-                      )}
-                      {latestVideo.video_url && (
-                        <a href={latestVideo.video_url} download>
-                          <Button size="sm" variant="ghost">
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                          </Button>
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              )}
-            </div>
-
-            {/* Side column */}
-            <div className="space-y-6">
-              {/* Streak */}
-              <Card className="text-center">
-                <p className="text-xs uppercase tracking-wider text-muted mb-2">Current Streak</p>
-                <motion.div
-                  className="text-5xl font-bold gradient-text pulse-gentle"
-                  key={streak.current_streak}
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                >
-                  {streak.current_streak}
-                </motion.div>
-                <p className="text-sm text-muted mt-1">days</p>
-                {streak.longest_streak > 0 && (
-                  <p className="text-xs text-muted/60 mt-3">
-                    Personal best: {streak.longest_streak} days
-                  </p>
-                )}
-              </Card>
-
-              {/* Credits */}
-              <Card>
-                <p className="text-xs uppercase tracking-wider text-muted mb-3">Video Credits</p>
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-1">
-                    {Array.from({ length: 3 }, (_, i) => (
-                      <div
-                        key={i}
-                        className={`w-4 h-4 rounded-full ${
-                          i < (user?.credits_remaining ?? 0) ? "bg-accent" : "bg-border"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-muted">
-                    {user?.credits_remaining ?? 0} remaining
-                  </span>
-                </div>
-                {(user?.credits_remaining ?? 0) > 0 ? (
-                  <Link href="/survey" className="block mt-4">
-                    <Button size="sm" variant="secondary" className="w-full">
-                      + New Video
-                    </Button>
-                  </Link>
-                ) : (
-                  <p className="text-xs text-muted mt-3">
-                    You&apos;ve used all your free credits. More coming soon.
-                  </p>
-                )}
-              </Card>
-
-              {/* Quick stats */}
-              {pledges.length > 0 && (
-                <Card>
-                  <p className="text-xs uppercase tracking-wider text-muted mb-3">Today</p>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted">Completed</span>
-                      <span className="font-medium text-success">
-                        {todayCompletions.filter(c => c.status === "done").length}/{pledges.length}
-                      </span>
-                    </div>
-                    <div className="h-1.5 rounded-full bg-surface-light overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-success transition-all"
-                        style={{
-                          width: `${pledges.length > 0
-                            ? (todayCompletions.filter(c => c.status === "done").length / pledges.length) * 100
-                            : 0}%`
-                        }}
-                      />
-                    </div>
-                  </div>
-                </Card>
-              )}
-            </div>
-          </div>
-        )}
-
-        {activeTab === "settings" && (
-          <NotificationSettings userId={user?.id ?? ""} />
-        )}
+      <div className="mx-auto max-w-3xl space-y-4 px-4 pt-24">
+        <div className="h-32 animate-pulse rounded-2xl border border-border bg-surface" />
+        <div className="h-64 animate-pulse rounded-2xl border border-border bg-surface" />
       </div>
     </div>
   );
 }
 
-// Notification preferences component inline
-function NotificationSettings({ userId }: { userId: string }) {
-  const [prefs, setPrefs] = useState({
-    morning_reminder_time: "07:00",
-    evening_checkin_time: "20:00",
-    email_morning_reminder: true,
-    email_evening_checkin: true,
-    email_weekly_summary: true,
-    email_video_ready: true,
-  });
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+function Dashboard() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const user = useAppStore((state) => state.user);
+
+  const [tab, setTab] = useState<Tab>((searchParams.get("tab") as Tab) ?? "today");
+  const [survey, setSurvey] = useState<SurveyData | null>(null);
+  const [pledges, setPledges] = useState<ActionPledge[]>([]);
+  const [today, setToday] = useState<Record<string, CompletionStatus>>({});
+  const [week, setWeek] = useState<DayCell[]>([]);
+  const [streak, setStreak] = useState<Streak | null>(null);
+  const [saved, setSaved] = useState<FeedCard[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const supabase = createClient();
-    supabase
-      .from("notification_preferences")
-      .select("*")
-      .eq("user_id", userId)
-      .single()
-      .then(({ data }) => {
-        if (data) setPrefs((p) => ({ ...p, ...data }));
-      });
-  }, [userId]);
+    let active = true;
 
-  const save = async () => {
-    setSaving(true);
-    const supabase = createClient();
-    await supabase
-      .from("notification_preferences")
-      .upsert({ user_id: userId, ...prefs });
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+    loadDashboard().then((result) => {
+      if (!active) return;
+      if (result.redirect) {
+        router.push(result.redirect);
+        return;
+      }
+      setSurvey(result.survey);
+      setStreak(result.streak);
+      setPledges(result.pledges);
+      setToday(result.today);
+      setWeek(result.week);
+      setSaved(result.saved);
+      setLoading(false);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [router]);
+
+
+  async function mark(pledgeId: string, status: CompletionStatus) {
+    setToday((current) => ({ ...current, [pledgeId]: status }));
+
+    const response = await fetch("/api/actions/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pledgeId, status }),
+    });
+
+    if (response.ok) {
+      const { streak: current, longest } = await response.json();
+      setStreak((existing) => ({
+        user_id: existing?.user_id ?? "",
+        current_streak: current,
+        longest_streak: longest,
+        last_completion_date: format(new Date(), "yyyy-MM-dd"),
+      }));
+      setWeek((current7) =>
+        current7.map((cell) => (isToday(cell.date) ? { ...cell, partial: true } : cell))
+      );
+    }
+  }
+
+  if (loading) return <DashboardSkeleton />;
+
+  const savedMeditations = saved.filter((card) => card.type === "meditation");
+  const doneToday = pledges.filter((pledge) => today[pledge.id] === "done").length;
 
   return (
-    <Card className="max-w-lg space-y-6">
-      <h2 className="text-lg font-semibold">Notification Settings</h2>
+    <div className="min-h-screen">
+      <Navbar />
 
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">Morning reminder time</p>
-            <p className="text-xs text-muted">Daily habit reminder</p>
-          </div>
-          <input
-            type="time"
-            value={prefs.morning_reminder_time}
-            onChange={(e) => setPrefs((p) => ({ ...p, morning_reminder_time: e.target.value }))}
-            className="bg-surface-light border border-border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
-          />
-        </div>
+      <div className="mx-auto max-w-3xl px-4 pb-20 pt-20">
+        {/* Identity statement — always first, always present tense */}
+        <motion.header initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+          <p className="text-sm text-muted">
+            {survey?.first_name ? `Morning, ${survey.first_name}.` : "Welcome back."}
+          </p>
+          <h1 className="mt-2 text-2xl font-bold leading-tight tracking-tight sm:text-3xl">
+            I am <span className="gradient-text">{survey?.future_identity}</span>
+          </h1>
+        </motion.header>
 
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium">Evening check-in time</p>
-            <p className="text-xs text-muted">End-of-day reflection</p>
-          </div>
-          <input
-            type="time"
-            value={prefs.evening_checkin_time}
-            onChange={(e) => setPrefs((p) => ({ ...p, evening_checkin_time: e.target.value }))}
-            className="bg-surface-light border border-border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50"
-          />
-        </div>
-
-        <div className="border-t border-border pt-4 space-y-3">
-          <p className="text-sm font-medium">Email notifications</p>
-          {[
-            { key: "email_morning_reminder", label: "Morning reminders" },
-            { key: "email_evening_checkin", label: "Evening check-ins" },
-            { key: "email_weekly_summary", label: "Weekly summary" },
-            { key: "email_video_ready", label: "Video ready alerts" },
-          ].map(({ key, label }) => (
-            <label key={key} className="flex items-center justify-between cursor-pointer">
-              <span className="text-sm text-muted">{label}</span>
-              <button
-                onClick={() => setPrefs((p) => ({ ...p, [key]: !p[key as keyof typeof p] }))}
-                className={`relative w-10 h-6 rounded-full transition-colors cursor-pointer ${
-                  prefs[key as keyof typeof prefs] ? "bg-accent" : "bg-border"
-                }`}
-              >
-                <span
-                  className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${
-                    prefs[key as keyof typeof prefs] ? "translate-x-4" : ""
-                  }`}
-                />
-              </button>
-            </label>
+        <nav className="mt-6 flex gap-1 rounded-xl border border-border bg-surface p-1">
+          {(["today", "saved", "settings"] as Tab[]).map((option) => (
+            <button
+              key={option}
+              onClick={() => setTab(option)}
+              className={`flex-1 cursor-pointer rounded-lg px-3 py-2 text-sm capitalize transition-colors ${
+                option === tab
+                  ? "bg-accent/15 font-medium text-accent-light"
+                  : "text-muted hover:text-foreground"
+              }`}
+            >
+              {option}
+            </button>
           ))}
-        </div>
-      </div>
+        </nav>
 
-      <Button onClick={save} loading={saving} size="sm">
-        {saved ? "Saved!" : "Save Settings"}
-      </Button>
-    </Card>
+        {tab === "today" ? (
+          <div className="mt-6 space-y-4">
+            {/* Streak + week */}
+            <Card className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.16em] text-muted">Current streak</p>
+                <p className="mt-1 text-4xl font-bold">
+                  {streak?.current_streak ?? 0}
+                  <span className="ml-2 text-base font-normal text-muted">
+                    {(streak?.current_streak ?? 0) === 1 ? "day" : "days"}
+                  </span>
+                </p>
+                {streak?.longest_streak ? (
+                  <p className="mt-1 text-xs text-muted">Longest: {streak.longest_streak} days</p>
+                ) : null}
+              </div>
+
+              <div className="flex gap-1.5">
+                {week.map((cell) => (
+                  <div key={cell.date.toISOString()} className="flex flex-col items-center gap-1.5">
+                    <span className="text-[10px] uppercase text-muted/60">
+                      {format(cell.date, "EEEEE")}
+                    </span>
+                    <div
+                      title={format(cell.date, "MMM d")}
+                      className={`h-8 w-8 rounded-lg border ${
+                        cell.complete
+                          ? "border-accent bg-accent"
+                          : cell.partial
+                            ? "border-accent/40 bg-accent/20"
+                            : "border-border bg-surface-light"
+                      }`}
+                    />
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Today's actions */}
+            <Card className="space-y-4">
+              <div className="flex items-baseline justify-between">
+                <h2 className="text-lg font-semibold">Today</h2>
+                {pledges.length > 0 ? (
+                  <span className="text-sm text-muted">
+                    {doneToday} of {pledges.length}
+                  </span>
+                ) : null}
+              </div>
+
+              {pledges.length === 0 ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted">
+                    Nothing committed yet. Content moves the self-image; the pledge is what moves
+                    the week.
+                  </p>
+                  <Link
+                    href="/plan"
+                    className="inline-block rounded-xl bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-dark"
+                  >
+                    Set your action plan
+                  </Link>
+                </div>
+              ) : (
+                pledges.map((pledge) => {
+                  const status = today[pledge.id];
+                  return (
+                    <div
+                      key={pledge.id}
+                      className="flex flex-col gap-3 rounded-xl border border-border p-4 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-[11px] uppercase tracking-[0.16em] text-muted">
+                          {ACTION_LABELS[pledge.action_type]}
+                        </p>
+                        <p className="mt-1 leading-snug">{pledge.action_text}</p>
+                      </div>
+                      <div className="flex shrink-0 gap-2">
+                        {(["done", "partial", "skipped"] as CompletionStatus[]).map((option) => (
+                          <button
+                            key={option}
+                            onClick={() => mark(pledge.id, option)}
+                            className={`cursor-pointer rounded-lg border px-3 py-1.5 text-xs capitalize transition-colors ${
+                              status === option
+                                ? option === "done"
+                                  ? "border-success bg-success/15 text-success"
+                                  : "border-accent/50 bg-accent/10 text-accent-light"
+                                : "border-border text-muted hover:text-foreground"
+                            }`}
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </Card>
+
+            {/* Feed entry */}
+            <Link href="/feed" className="block">
+              <Card hover className="flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-lg font-semibold">Your feed is ready</h2>
+                  <p className="mt-1 text-sm text-muted">
+                    Today&apos;s pieces, chosen for where you are and what time it is.
+                  </p>
+                </div>
+                <span className="text-2xl text-accent">→</span>
+              </Card>
+            </Link>
+
+            {/* Meditations + credits */}
+            <Card className="space-y-4">
+              <div className="flex items-baseline justify-between">
+                <h2 className="text-lg font-semibold">Meditations</h2>
+                <span className="text-sm text-muted">
+                  {user?.credits_remaining ?? 0} credits left
+                </span>
+              </div>
+
+              {savedMeditations.length === 0 ? (
+                <p className="text-sm text-muted">
+                  Nothing saved yet. Save a session from your feed and it lands here.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {savedMeditations.map((card) => (
+                    <li
+                      key={card.content_id}
+                      className="flex items-center justify-between rounded-xl border border-border p-3"
+                    >
+                      <span className="text-sm">{card.title}</span>
+                      <span className="text-xs text-muted">
+                        {Math.round((card.duration_seconds ?? 0) / 60)} min
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <button
+                disabled
+                title="Custom meditation creation is coming next"
+                className="w-full cursor-not-allowed rounded-xl border border-border px-4 py-2.5 text-sm text-muted opacity-60"
+              >
+                Create a custom meditation — coming soon
+              </button>
+            </Card>
+          </div>
+        ) : null}
+
+        {tab === "saved" ? (
+          <div className="mt-6">
+            {saved.length === 0 ? (
+              <Card>
+                <p className="text-sm text-muted">
+                  Nothing saved yet. Tap the bookmark on any piece in your feed.
+                </p>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {saved.map((card) => (
+                  <Card key={`${card.source}:${card.content_id}`} className="space-y-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-medium leading-snug">{card.title}</h3>
+                      <span className="shrink-0 text-[11px] uppercase tracking-[0.14em] text-muted/60">
+                        {card.type}
+                      </span>
+                    </div>
+                    <p className="text-sm leading-relaxed text-muted">
+                      {card.content_data.affirmation ??
+                        card.content_data.text ??
+                        card.content_data.slides?.[0]?.text}
+                    </p>
+                    <span className="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs text-accent-light">
+                      {card.benefit_tag}
+                    </span>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {tab === "settings" ? (
+          <div className="mt-6">
+            <NotificationSettings userId={user?.id ?? ""} />
+          </div>
+        ) : null}
+      </div>
+    </div>
   );
 }

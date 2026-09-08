@@ -1,0 +1,1363 @@
+[
+  {
+    "id": "lib_aff_001",
+    "type": "affirmation",
+    "title": "Your first line of the day",
+    "content_data": {
+      "affirmation": "I am {{future_identity}}.",
+      "text": "Say it before you look at your phone. Out loud if you can.",
+      "music_bed": "ambient_sunrise"
+    },
+    "benefit_tag": "Rewires self-image",
+    "science_ref": "Self-affirmation research (Cascio et al., 2016)",
+    "method_tags": [
+      "self_affirmation",
+      "psycho_cybernetics_self_image"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{future_identity}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": 20,
+    "is_premium": false
+  },
+  {
+    "id": "lib_aff_002",
+    "type": "affirmation",
+    "title": "Three things, before anything else",
+    "content_data": {
+      "affirmation": "I'm grateful for {{gratitude_1}}, {{gratitude_2}}, and {{gratitude_3}}.",
+      "text": "Name them slowly. Let each one land before moving to the next.",
+      "music_bed": "ambient_warm"
+    },
+    "benefit_tag": "Activates reward circuitry",
+    "science_ref": "Gratitude and reward pathways (Zahn et al., 2008)",
+    "method_tags": [
+      "gratitude_neuroscience"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{gratitude_1}}",
+      "{{gratitude_2}}",
+      "{{gratitude_3}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": 30,
+    "is_premium": false
+  },
+  {
+    "id": "lib_aff_003",
+    "type": "affirmation",
+    "title": "Not a task — a description",
+    "content_data": {
+      "affirmation": "Every day I {{daily_habit}}, because that's who I am.",
+      "text": "You're not trying to do this. You're someone who does this.",
+      "music_bed": "ambient_focus"
+    },
+    "benefit_tag": "Strengthens daily habits",
+    "science_ref": "Identity-based habits (Clear, 2018)",
+    "method_tags": [
+      "identity_based_habits"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{daily_habit}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": 20,
+    "is_premium": false
+  },
+  {
+    "id": "lib_img_001",
+    "type": "image",
+    "title": "The person who already did it",
+    "content_data": {
+      "text": "I am {{future_identity}}",
+      "image_prompt": "cinematic portrait of {{user_likeness}} standing in early morning light, calm and certain, {{visual_mood}} grading, shallow depth of field",
+      "prompt": "Hold this image for ten seconds before you scroll."
+    },
+    "benefit_tag": "Rewires self-image",
+    "science_ref": "Self-image research (Maltz, 1960)",
+    "method_tags": [
+      "psycho_cybernetics_self_image"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{future_identity}}",
+      "{{user_likeness}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_img_002",
+    "type": "image",
+    "title": "Your trigger, written down",
+    "content_data": {
+      "text": "If it is {{if_time}}, then I will {{then_action}}.",
+      "image_prompt": "minimal typographic card, soft gradient background, single line of text, {{visual_mood}} grading",
+      "prompt": "Read it once. That's the whole practice."
+    },
+    "benefit_tag": "Strengthens implementation intentions",
+    "science_ref": "If-then planning (Gollwitzer, 1999 — 94 studies, d = .65)",
+    "method_tags": [
+      "implementation_intentions"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{if_time}}",
+      "{{then_action}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_001",
+    "type": "carousel",
+    "title": "The first ten minutes decide the day",
+    "content_data": {
+      "slides": [
+        {
+          "text": "The first ten minutes of your day set the frame for the other fourteen hours."
+        },
+        {
+          "text": "Not because of productivity. Because of self-perception."
+        },
+        {
+          "text": "Whatever you do first is evidence. Your brain reads it as a statement about who you are."
+        },
+        {
+          "text": "So make the first thing small and unmistakable: {{first_step}}."
+        },
+        {
+          "text": "Do that, and by 9am you already have proof. Today, you're {{future_identity}}."
+        }
+      ],
+      "prompt": "What's your first ten minutes tomorrow?"
+    },
+    "benefit_tag": "Strengthens daily habits",
+    "science_ref": "Cue-routine-reward habit formation (Duhigg, 2012)",
+    "method_tags": [
+      "habit_loop",
+      "identity_based_habits"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{first_step}}",
+      "{{future_identity}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_med_001",
+    "type": "meditation",
+    "title": "Morning identity primer",
+    "content_data": {
+      "text": "Two minutes. Eyes closed. Before the day gets loud.",
+      "sections": [
+        "induction",
+        "identity_visualization",
+        "integration"
+      ],
+      "music_bed": "alpha_10hz_sunrise"
+    },
+    "benefit_tag": "Primes subconscious mind",
+    "science_ref": "Alpha-state entrainment (Wahbeh et al., 2007)",
+    "method_tags": [
+      "silva_mirror_of_mind",
+      "mental_rehearsal"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [],
+    "intensity": "gentle",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": 120,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_002",
+    "type": "carousel",
+    "title": "Why gratitude goes first",
+    "content_data": {
+      "slides": [
+        {
+          "text": "Gratitude isn't a nice-to-have. It's a state change."
+        },
+        {
+          "text": "Naming something specific you're grateful for shifts activity in the brain's reward pathways."
+        },
+        {
+          "text": "That matters because you can't build a new self-image from a scarcity state."
+        },
+        {
+          "text": "So start here: {{gratitude_self}}. That's yours. Nobody gave it to you."
+        },
+        {
+          "text": "Now the rest of the work has somewhere solid to stand."
+        }
+      ]
+    },
+    "benefit_tag": "Activates reward circuitry",
+    "science_ref": "Gratitude interventions (Emmons & McCullough, 2003)",
+    "method_tags": [
+      "gratitude_neuroscience"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{gratitude_self}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_aff_004",
+    "type": "affirmation",
+    "title": "The part of you that's already working",
+    "content_data": {
+      "affirmation": "{{gratitude_self}} — and that's not an accident.",
+      "text": "You built that. Which means you can build the next thing too.",
+      "music_bed": "ambient_warm"
+    },
+    "benefit_tag": "Builds self-efficacy",
+    "science_ref": "Mastery experiences and self-efficacy (Bandura, 1997)",
+    "method_tags": [
+      "self_efficacy"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{gratitude_self}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": 20,
+    "is_premium": false
+  },
+  {
+    "id": "lib_vid_001",
+    "type": "video",
+    "title": "Your morning, as that person",
+    "content_data": {
+      "text": "{{ideal_routine}}",
+      "image_prompt": "warm cinematic morning routine, {{user_likeness}} moving with unhurried purpose, {{visual_mood}} grading",
+      "prompt": "Watch it like it already happened."
+    },
+    "benefit_tag": "Activates mental rehearsal",
+    "science_ref": "Mental practice produces cortical change (Pascual-Leone et al., 1995)",
+    "method_tags": [
+      "mental_rehearsal",
+      "psycho_cybernetics_theater_of_mind"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{ideal_routine}}",
+      "{{user_likeness}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "morning",
+    "duration_seconds": 30,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_003",
+    "type": "carousel",
+    "title": "Rewriting your self-image",
+    "content_data": {
+      "slides": [
+        {
+          "text": "Your self-image is a mental blueprint. It decides what feels possible before you consciously decide anything."
+        },
+        {
+          "text": "It was built from old experiences — most of them from a version of you that no longer exists."
+        },
+        {
+          "text": "You will never outperform it. Not with willpower, not with a better plan."
+        },
+        {
+          "text": "But it isn't fixed. The brain rebuilds the map it uses most."
+        },
+        {
+          "text": "So use this one: {{future_identity}}."
+        },
+        {
+          "text": "Read it daily until it stops sounding like a stretch and starts sounding like a fact."
+        }
+      ]
+    },
+    "benefit_tag": "Rewires self-image",
+    "science_ref": "Self-image research (Maltz, 1960); neuroplasticity (Doidge, 2007)",
+    "method_tags": [
+      "psycho_cybernetics_self_image"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{future_identity}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "any",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_004",
+    "type": "carousel",
+    "title": "The sentence you keep repeating",
+    "content_data": {
+      "slides": [
+        {
+          "text": "There's a line running in the background of your head. Yours sounds like this:"
+        },
+        {
+          "text": "\"{{limiting_belief}}\""
+        },
+        {
+          "text": "It feels like an observation. It's a habit — a thought you've rehearsed so many times it became automatic."
+        },
+        {
+          "text": "Rehearsed thoughts strengthen the pathways that carry them. That's all it is: repetition, not truth."
+        },
+        {
+          "text": "So rehearse the accurate one instead: I am {{future_identity}}, and I have the evidence to prove it."
+        },
+        {
+          "text": "Say the new line today, every time the old one shows up. That's the whole rewrite."
+        }
+      ],
+      "prompt": "Catch the old line once today. Replace it on the spot."
+    },
+    "benefit_tag": "Reframes limiting beliefs",
+    "science_ref": "Cognitive reframing and neural pathway strengthening",
+    "method_tags": [
+      "psycho_cybernetics_self_image",
+      "self_affirmation"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{future_identity}}",
+      "{{limiting_belief}}"
+    ],
+    "intensity": "intense",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_img_003",
+    "type": "image",
+    "title": "One scene from the life",
+    "content_data": {
+      "text": "{{dream_scene}}",
+      "image_prompt": "{{dream_scene}}, featuring {{user_likeness}}, {{visual_mood}} grading, cinematic composition, natural light",
+      "prompt": "Add one sense the picture doesn't have. What do you hear?"
+    },
+    "benefit_tag": "Activates mental rehearsal",
+    "science_ref": "Functional equivalence of mental and physical practice (Pascual-Leone et al., 1995)",
+    "method_tags": [
+      "mental_rehearsal",
+      "silva_mirror_of_mind"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{dream_scene}}",
+      "{{user_likeness}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "intense",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_med_002",
+    "type": "meditation",
+    "title": "The screen and the frame",
+    "content_data": {
+      "text": "Five minutes. Somewhere you won't be interrupted.",
+      "sections": [
+        "induction",
+        "identity_visualization",
+        "mental_contrasting",
+        "integration"
+      ],
+      "music_bed": "alpha_10hz_ambient"
+    },
+    "benefit_tag": "Primes subconscious mind",
+    "science_ref": "Alpha-state visualization; mental contrasting (Oettingen, 2012)",
+    "method_tags": [
+      "silva_mirror_of_mind",
+      "woop_mental_contrasting"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [],
+    "intensity": "moderate",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": 300,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_005",
+    "type": "carousel",
+    "title": "The obstacle is the plan",
+    "content_data": {
+      "slides": [
+        {
+          "text": "Pure positive visualization makes you feel better and do less. That's a measured effect, not a moral."
+        },
+        {
+          "text": "Dreaming alone drops the body's energy for the work. Your brain treats the image as partial credit."
+        },
+        {
+          "text": "What restores it is contrast: the dream, then the honest obstacle, back to back."
+        },
+        {
+          "text": "Yours: {{inner_obstacle}}. And out in the world: {{external_obstacle}}."
+        },
+        {
+          "text": "Now the plan has something to grip. If it is {{if_time}}, then I will {{then_action}}."
+        },
+        {
+          "text": "That's not pessimism. That's what turns a wish into an intention."
+        }
+      ]
+    },
+    "benefit_tag": "Deepens identity shift",
+    "science_ref": "Mental contrasting with implementation intentions (Oettingen, 2012)",
+    "method_tags": [
+      "woop_mental_contrasting",
+      "implementation_intentions"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{external_obstacle}}",
+      "{{if_time}}",
+      "{{inner_obstacle}}",
+      "{{then_action}}"
+    ],
+    "intensity": "intense",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_vid_002",
+    "type": "video",
+    "title": "Inside the moment",
+    "content_data": {
+      "text": "{{dream_scene}}",
+      "image_prompt": "{{dream_scene}}, {{user_likeness}} at the centre, {{visual_mood}} grading, slow push-in, volumetric light",
+      "prompt": "Feel it in the body, not just the eyes."
+    },
+    "benefit_tag": "Activates mental rehearsal",
+    "science_ref": "Mental rehearsal and cortical mapping (Pascual-Leone et al., 1995)",
+    "method_tags": [
+      "mental_rehearsal",
+      "psycho_cybernetics_theater_of_mind"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{dream_scene}}",
+      "{{user_likeness}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "intense",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": 45,
+    "is_premium": false
+  },
+  {
+    "id": "lib_img_004",
+    "type": "image",
+    "title": "Cue. Routine. Reward.",
+    "content_data": {
+      "text": "{{if_time}} → {{then_action}} → the version of you that did it",
+      "image_prompt": "clean minimal three-part diagram, soft gradient, {{visual_mood}} grading",
+      "prompt": "The cue does the work. Make it impossible to miss."
+    },
+    "benefit_tag": "Strengthens daily habits",
+    "science_ref": "Habit loop (Duhigg, 2012)",
+    "method_tags": [
+      "habit_loop",
+      "implementation_intentions"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{if_time}}",
+      "{{then_action}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_aff_005",
+    "type": "affirmation",
+    "title": "It shows up. You move anyway.",
+    "content_data": {
+      "affirmation": "{{inner_obstacle}} shows up. I move anyway — that's the whole difference.",
+      "text": "The feeling doesn't have to leave before you start.",
+      "music_bed": "ambient_focus"
+    },
+    "benefit_tag": "Reframes limiting beliefs",
+    "science_ref": "Mental contrasting (Oettingen, 2012)",
+    "method_tags": [
+      "woop_mental_contrasting",
+      "self_efficacy"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{inner_obstacle}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": 20,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_006",
+    "type": "carousel",
+    "title": "Make it embarrassingly small",
+    "content_data": {
+      "slides": [
+        {
+          "text": "Confidence isn't a feeling you find. It's a residue left behind by evidence."
+        },
+        {
+          "text": "The fastest way to make evidence is to shrink the task until failing is implausible."
+        },
+        {
+          "text": "Yours is already the right size: {{first_step}}."
+        },
+        {
+          "text": "Do it badly. Do it in two minutes. The point is the record, not the result."
+        },
+        {
+          "text": "Repeat that enough times and the belief updates on its own. You won't have to argue with it."
+        }
+      ],
+      "prompt": "Do the two-minute version now, before you scroll on."
+    },
+    "benefit_tag": "Builds self-efficacy",
+    "science_ref": "Mastery experiences (Bandura, 1997)",
+    "method_tags": [
+      "self_efficacy",
+      "identity_based_habits"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{first_step}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_img_005",
+    "type": "image",
+    "title": "Calm under pressure",
+    "content_data": {
+      "text": "The person who does {{occupation}} like it's obvious.",
+      "image_prompt": "{{user_likeness}} working with quiet authority in a {{occupation}} setting, {{visual_mood}} grading, natural light",
+      "prompt": "Same room, same work — different person doing it."
+    },
+    "benefit_tag": "Rewires self-image",
+    "science_ref": "Self-image research (Maltz, 1960)",
+    "method_tags": [
+      "psycho_cybernetics_self_image",
+      "mental_rehearsal"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{occupation}}",
+      "{{user_likeness}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_007",
+    "type": "carousel",
+    "title": "What imagining does to the brain",
+    "content_data": {
+      "slides": [
+        {
+          "text": "Two groups learned the same five-finger piano sequence over five days."
+        },
+        {
+          "text": "One group played it. The other only imagined playing it — no keys, no movement."
+        },
+        {
+          "text": "Brain mapping showed the same region reorganize in both groups."
+        },
+        {
+          "text": "Imagined practice built real motor cortex change. Not as a metaphor — as a measurement."
+        },
+        {
+          "text": "Which is why the minutes you spend inside {{dream_scene}} are not time off. They're reps."
+        }
+      ]
+    },
+    "benefit_tag": "Builds neural pathways",
+    "science_ref": "Pascual-Leone et al., 1995",
+    "method_tags": [
+      "mental_rehearsal"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{dream_scene}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_med_003",
+    "type": "meditation",
+    "title": "Rehearsal: the habit, done",
+    "content_data": {
+      "text": "Five minutes of practising the thing before you do it.",
+      "sections": [
+        "induction",
+        "action_rehearsal",
+        "integration"
+      ],
+      "music_bed": "alpha_10hz_focus"
+    },
+    "benefit_tag": "Strengthens daily habits",
+    "science_ref": "Mental rehearsal (Pascual-Leone et al., 1995); identity-based habits (Clear, 2018)",
+    "method_tags": [
+      "mental_rehearsal",
+      "identity_based_habits",
+      "implementation_intentions"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [],
+    "intensity": "moderate",
+    "time_of_day_affinity": "midday",
+    "duration_seconds": 300,
+    "is_premium": false
+  },
+  {
+    "id": "lib_aff_006",
+    "type": "affirmation",
+    "title": "Today counted",
+    "content_data": {
+      "affirmation": "Today I voted for {{future_identity}}.",
+      "text": "Not perfectly. That was never the requirement.",
+      "music_bed": "ambient_dusk"
+    },
+    "benefit_tag": "Deepens identity shift",
+    "science_ref": "Identity-based habits (Clear, 2018)",
+    "method_tags": [
+      "identity_based_habits",
+      "self_affirmation"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{future_identity}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "evening",
+    "duration_seconds": 20,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_008",
+    "type": "carousel",
+    "title": "Replay the day — but edit it",
+    "content_data": {
+      "slides": [
+        {
+          "text": "Pick one moment from today that didn't go how you wanted."
+        },
+        {
+          "text": "Watch it back once, plainly. No commentary, no verdict on yourself."
+        },
+        {
+          "text": "Now run it again — this time as {{future_identity}} would have handled it."
+        },
+        {
+          "text": "Same room, same people. Different posture, different sentence, different pause before answering."
+        },
+        {
+          "text": "Run the second version twice more. That's the one your brain keeps."
+        },
+        {
+          "text": "You just rehearsed for the next time it happens. And there will be a next time."
+        }
+      ],
+      "prompt": "Which moment did you re-run?"
+    },
+    "benefit_tag": "Rewires self-image",
+    "science_ref": "Mental rehearsal (Maltz, 1960; Pascual-Leone et al., 1995)",
+    "method_tags": [
+      "psycho_cybernetics_theater_of_mind",
+      "mental_rehearsal"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{future_identity}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "evening",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_med_004",
+    "type": "meditation",
+    "title": "The full session",
+    "content_data": {
+      "text": "Ten minutes. The whole arc — settle, appreciate, see it, face it, rehearse it, return.",
+      "sections": [
+        "induction",
+        "gratitude_priming",
+        "identity_visualization",
+        "mental_contrasting",
+        "action_rehearsal",
+        "integration"
+      ],
+      "music_bed": "alpha_10hz_deep"
+    },
+    "benefit_tag": "Deepens identity shift",
+    "science_ref": "Alpha-state visualization; mental contrasting (Oettingen, 2012); implementation intentions (Gollwitzer, 1999)",
+    "method_tags": [
+      "silva_mirror_of_mind",
+      "gratitude_neuroscience",
+      "woop_mental_contrasting",
+      "implementation_intentions",
+      "identity_based_habits"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [],
+    "intensity": "intense",
+    "time_of_day_affinity": "evening",
+    "duration_seconds": 600,
+    "is_premium": true
+  },
+  {
+    "id": "lib_img_006",
+    "type": "image",
+    "title": "Still true tonight",
+    "content_data": {
+      "text": "{{gratitude_1}}",
+      "image_prompt": "quiet evening scene, warm low light, soft focus, {{visual_mood}} grading",
+      "prompt": "It was true this morning. It's still true now."
+    },
+    "benefit_tag": "Activates reward circuitry",
+    "science_ref": "Gratitude and reward pathways (Zahn et al., 2008)",
+    "method_tags": [
+      "gratitude_neuroscience"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{gratitude_1}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "evening",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_009",
+    "type": "carousel",
+    "title": "What did today prove?",
+    "content_data": {
+      "slides": [
+        {
+          "text": "Not \"was today good.\" That's a mood report, and moods are unreliable witnesses."
+        },
+        {
+          "text": "Ask instead: what did today prove about who I'm becoming?"
+        },
+        {
+          "text": "One kept promise is evidence. One recovery after skipping is stronger evidence."
+        },
+        {
+          "text": "You did {{daily_habit}} — or you didn't, and you're still here reading this. Both count for something."
+        },
+        {
+          "text": "Write down the single piece of evidence today produced. Tomorrow starts from there."
+        }
+      ],
+      "prompt": "One line. What did today prove?"
+    },
+    "benefit_tag": "Builds self-efficacy",
+    "science_ref": "Mastery experiences (Bandura, 1997)",
+    "method_tags": [
+      "self_efficacy",
+      "identity_based_habits"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{daily_habit}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "evening",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_med_005",
+    "type": "meditation",
+    "title": "Wind-down gratitude",
+    "content_data": {
+      "text": "Two minutes to close the day somewhere other than your inbox.",
+      "sections": [
+        "induction",
+        "gratitude_priming",
+        "integration"
+      ],
+      "music_bed": "alpha_10hz_night"
+    },
+    "benefit_tag": "Activates reward circuitry",
+    "science_ref": "Gratitude interventions (Emmons & McCullough, 2003)",
+    "method_tags": [
+      "gratitude_neuroscience"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [],
+    "intensity": "gentle",
+    "time_of_day_affinity": "evening",
+    "duration_seconds": 120,
+    "is_premium": false
+  },
+  {
+    "id": "lib_aff_007",
+    "type": "affirmation",
+    "title": "Set for tomorrow",
+    "content_data": {
+      "affirmation": "Tomorrow at {{if_time}}, I {{then_action}}.",
+      "text": "Decide it now, while it costs nothing. Tomorrow-you just executes.",
+      "music_bed": "ambient_dusk"
+    },
+    "benefit_tag": "Strengthens implementation intentions",
+    "science_ref": "Precommitment (Rogers et al., 2015); if-then plans (Gollwitzer, 1999)",
+    "method_tags": [
+      "implementation_intentions"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{if_time}}",
+      "{{then_action}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "evening",
+    "duration_seconds": 20,
+    "is_premium": false
+  },
+  {
+    "id": "lib_vid_003",
+    "type": "video",
+    "title": "Tomorrow morning, seen tonight",
+    "content_data": {
+      "text": "{{if_time}} — {{then_action}}",
+      "image_prompt": "first light through a window, {{user_likeness}} beginning the day with quiet intent, {{visual_mood}} grading",
+      "prompt": "Watch tomorrow before it happens. Then let it go."
+    },
+    "benefit_tag": "Activates mental rehearsal",
+    "science_ref": "Mental rehearsal (Pascual-Leone et al., 1995)",
+    "method_tags": [
+      "mental_rehearsal",
+      "implementation_intentions"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{if_time}}",
+      "{{then_action}}",
+      "{{user_likeness}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "evening",
+    "duration_seconds": 30,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_010",
+    "type": "carousel",
+    "title": "A thermostat, not a thermometer",
+    "content_data": {
+      "slides": [
+        {
+          "text": "A thermometer reports the temperature. A thermostat decides it."
+        },
+        {
+          "text": "Your self-image is a thermostat. It has a setting, and it defends that setting."
+        },
+        {
+          "text": "Go too far above it and you'll self-correct — you'll call it bad luck, or bad timing, or getting ahead of yourself."
+        },
+        {
+          "text": "Which is why raising the setting matters more than pushing harder against it."
+        },
+        {
+          "text": "The new setting: {{future_identity}}."
+        },
+        {
+          "text": "Set it, then let your behaviour drift up to meet it. That direction is the easy one."
+        }
+      ]
+    },
+    "benefit_tag": "Rewires self-image",
+    "science_ref": "Self-image and the servo-mechanism model (Maltz, 1960)",
+    "method_tags": [
+      "psycho_cybernetics_self_image"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{future_identity}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "any",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_aff_008",
+    "type": "affirmation",
+    "title": "Ready is not the requirement",
+    "content_data": {
+      "affirmation": "I don't have to feel ready. I have to be the person who starts.",
+      "text": "Motivation follows action far more reliably than it leads it.",
+      "music_bed": "ambient_focus"
+    },
+    "benefit_tag": "Builds self-efficacy",
+    "science_ref": "Self-efficacy through action (Bandura, 1997)",
+    "method_tags": [
+      "self_efficacy",
+      "identity_based_habits"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [],
+    "intensity": "moderate",
+    "time_of_day_affinity": "any",
+    "duration_seconds": 20,
+    "is_premium": false
+  },
+  {
+    "id": "lib_img_007",
+    "type": "image",
+    "title": "The old line, struck through",
+    "content_data": {
+      "text": "{{limiting_belief}}",
+      "image_prompt": "typographic composition, one sentence struck through, replacement line beneath in clear type, {{visual_mood}} grading",
+      "prompt": "Underneath it: I am {{future_identity}}."
+    },
+    "benefit_tag": "Reframes limiting beliefs",
+    "science_ref": "Cognitive reframing; self-affirmation (Cascio et al., 2016)",
+    "method_tags": [
+      "self_affirmation",
+      "psycho_cybernetics_self_image"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{future_identity}}",
+      "{{limiting_belief}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "intense",
+    "time_of_day_affinity": "any",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_med_006",
+    "type": "meditation",
+    "title": "Meeting the version of you that made it",
+    "content_data": {
+      "text": "Five minutes with the person on the other side of {{timeline}}.",
+      "sections": [
+        "induction",
+        "identity_visualization",
+        "action_rehearsal",
+        "integration"
+      ],
+      "music_bed": "alpha_10hz_ambient"
+    },
+    "benefit_tag": "Deepens identity shift",
+    "science_ref": "Mental rehearsal (Maltz, 1960); future self-continuity research",
+    "method_tags": [
+      "psycho_cybernetics_theater_of_mind",
+      "mental_rehearsal",
+      "identity_based_habits"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{timeline}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "any",
+    "duration_seconds": 300,
+    "is_premium": false
+  },
+  {
+    "id": "lib_car_011",
+    "type": "carousel",
+    "title": "Every action is a vote",
+    "content_data": {
+      "slides": [
+        {
+          "text": "Goals are a direction. They're bad at deciding what you do on a Tuesday you didn't sleep well."
+        },
+        {
+          "text": "Identity decides that. Not \"I want to run\" — \"I'm a runner, and runners run on bad days too.\""
+        },
+        {
+          "text": "Each small action is a vote for a type of person. Nothing needs a unanimous result."
+        },
+        {
+          "text": "You just need the majority. Miss once and the count still holds."
+        },
+        {
+          "text": "Today's vote: {{daily_habit}}. Cast it, and the identity does the arguing for you."
+        }
+      ]
+    },
+    "benefit_tag": "Deepens identity shift",
+    "science_ref": "Identity-based habits (Clear, 2018)",
+    "method_tags": [
+      "identity_based_habits",
+      "habit_loop"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{daily_habit}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "any",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_vid_004",
+    "type": "video",
+    "title": "Sixty seconds inside it",
+    "content_data": {
+      "text": "{{dream_description}}",
+      "image_prompt": "extended cinematic sequence of {{dream_description}}, {{user_likeness}} present throughout, {{visual_mood}} grading",
+      "prompt": "Nothing to do here but be in it."
+    },
+    "benefit_tag": "Activates mental rehearsal",
+    "science_ref": "Functional equivalence of imagined practice (Pascual-Leone et al., 1995)",
+    "method_tags": [
+      "mental_rehearsal",
+      "silva_mirror_of_mind"
+    ],
+    "goal_categories": [
+      "career_money",
+      "health_fitness",
+      "love_relationships",
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{dream_description}}",
+      "{{user_likeness}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "intense",
+    "time_of_day_affinity": "any",
+    "duration_seconds": 60,
+    "is_premium": false
+  },
+  {
+    "id": "lib_aff_009",
+    "type": "affirmation",
+    "title": "The byproduct",
+    "content_data": {
+      "affirmation": "I don't chase the money. I become the person it follows.",
+      "text": "Skill, judgment, and showing up are the assets. The number is downstream.",
+      "music_bed": "ambient_focus"
+    },
+    "benefit_tag": "Rewires self-image",
+    "science_ref": "Identity-based habits (Clear, 2018)",
+    "method_tags": [
+      "identity_based_habits",
+      "psycho_cybernetics_self_image"
+    ],
+    "goal_categories": [
+      "career_money"
+    ],
+    "personalization_variables": [],
+    "intensity": "moderate",
+    "time_of_day_affinity": "any",
+    "duration_seconds": 20,
+    "is_premium": false
+  },
+  {
+    "id": "lib_aff_010",
+    "type": "affirmation",
+    "title": "Not for a body",
+    "content_data": {
+      "affirmation": "I don't train for a body. I train because I'm someone who trains.",
+      "text": "The result is a side effect. The identity is the point.",
+      "music_bed": "ambient_drive"
+    },
+    "benefit_tag": "Strengthens daily habits",
+    "science_ref": "Identity-based habits (Clear, 2018)",
+    "method_tags": [
+      "identity_based_habits"
+    ],
+    "goal_categories": [
+      "health_fitness"
+    ],
+    "personalization_variables": [],
+    "intensity": "moderate",
+    "time_of_day_affinity": "any",
+    "duration_seconds": 20,
+    "is_premium": false
+  },
+  {
+    "id": "lib_img_008",
+    "type": "image",
+    "title": "The way you show up for people",
+    "content_data": {
+      "text": "I am {{future_identity}} — including with the people I love.",
+      "image_prompt": "warm intimate scene, {{user_likeness}} fully present with another person, soft natural light, {{visual_mood}} grading",
+      "prompt": "Identity isn't only what you achieve. It's how you arrive."
+    },
+    "benefit_tag": "Deepens identity shift",
+    "science_ref": "Self-affirmation and core values (Cascio et al., 2016)",
+    "method_tags": [
+      "self_affirmation",
+      "psycho_cybernetics_self_image"
+    ],
+    "goal_categories": [
+      "love_relationships"
+    ],
+    "personalization_variables": [
+      "{{future_identity}}",
+      "{{user_likeness}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "gentle",
+    "time_of_day_affinity": "any",
+    "duration_seconds": null,
+    "is_premium": false
+  },
+  {
+    "id": "lib_img_009",
+    "type": "image",
+    "title": "The work gets made by whoever shows up",
+    "content_data": {
+      "text": "{{daily_habit}} — on the good days and the flat ones.",
+      "image_prompt": "creative workspace mid-project, {{user_likeness}} absorbed in the work, {{visual_mood}} grading",
+      "prompt": "Nobody sees the flat days in the finished thing."
+    },
+    "benefit_tag": "Strengthens daily habits",
+    "science_ref": "Habit loop (Duhigg, 2012); identity-based habits (Clear, 2018)",
+    "method_tags": [
+      "habit_loop",
+      "identity_based_habits"
+    ],
+    "goal_categories": [
+      "creative_purpose"
+    ],
+    "personalization_variables": [
+      "{{daily_habit}}",
+      "{{user_likeness}}",
+      "{{visual_mood}}"
+    ],
+    "intensity": "moderate",
+    "time_of_day_affinity": "any",
+    "duration_seconds": null,
+    "is_premium": false
+  }
+]

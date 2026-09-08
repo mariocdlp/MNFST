@@ -1,4 +1,4 @@
--- MNFST Database Schema
+-- IDSHIFT Database Schema
 -- Run this in the Supabase SQL Editor to set up the database
 
 -- Enable UUID extension

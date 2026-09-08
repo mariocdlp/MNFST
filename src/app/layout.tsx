@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MNFST — See Your Future. Build It Today.",
+  title: "IDSHIFT — Become the person who already did it.",
   description:
-    "AI-generated personalized manifestation videos backed by real science. Visualize your goals, commit to action, and track your transformation.",
+    "A science-backed identity shift platform: a personalized daily feed, custom meditations, and a pledge system that turns self-image into behaviour.",
 };
 
 export default function RootLayout({

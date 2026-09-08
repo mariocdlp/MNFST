@@ -58,10 +58,10 @@ export default function SignupPage() {
       >
         <div className="text-center mb-8">
           <Link href="/" className="text-2xl font-bold gradient-text">
-            MNFST
+            IDSHIFT
           </Link>
           <h1 className="text-2xl font-bold mt-6">Create your account</h1>
-          <p className="text-muted mt-2">Start with 3 free video credits</p>
+          <p className="text-muted mt-2">Start with 5 free meditation credits</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 p-8 rounded-2xl bg-surface border border-border">

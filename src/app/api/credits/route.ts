@@ -1,8 +1,14 @@
-// API: Credit management — check balance and deduct
+// API: credit balance and spend.
+//
+// Spending goes through the spend_credit() function so the check and the
+// decrement happen in one statement — two tabs can't both spend the last credit.
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-// GET: Return current credit balance
+type Reason = "meditation_created";
+
+const REASONS: Reason[] = ["meditation_created"];
+
 export async function GET() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -12,7 +18,7 @@ export async function GET() {
     .from("profiles")
     .select("credits_remaining, credits_used")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   return NextResponse.json({
     credits_remaining: profile?.credits_remaining ?? 0,
@@ -20,38 +26,27 @@ export async function GET() {
   });
 }
 
-// POST: Deduct one credit (idempotent — pass videoId to prevent double-deduct)
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { videoId } = await request.json();
+  const { reason } = (await request.json()) as { reason?: Reason };
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("credits_remaining, credits_used")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || profile.credits_remaining < 1) {
-    return NextResponse.json({ error: "Insufficient credits" }, { status: 402 });
+  if (!reason || !REASONS.includes(reason)) {
+    return NextResponse.json({ error: "A valid reason is required" }, { status: 400 });
   }
 
-  const { error } = await supabase
-    .from("profiles")
-    .update({
-      credits_remaining: profile.credits_remaining - 1,
-      credits_used: (profile.credits_used ?? 0) + 1,
-      last_credit_used_at: new Date().toISOString(),
-    })
-    .eq("id", user.id);
+  const { data: remaining, error } = await supabase.rpc("spend_credit", { p_reason: reason });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({
-    success: true,
-    credits_remaining: profile.credits_remaining - 1,
-    videoId,
-  });
+  if (remaining === null) {
+    return NextResponse.json(
+      { error: "You've used all your free credits. More coming soon." },
+      { status: 402 }
+    );
+  }
+
+  return NextResponse.json({ success: true, credits_remaining: remaining });
 }

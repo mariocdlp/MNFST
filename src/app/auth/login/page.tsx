@@ -50,7 +50,7 @@ function LoginForm() {
       >
         <div className="text-center mb-8">
           <Link href="/" className="text-2xl font-bold gradient-text">
-            MNFST
+            IDSHIFT
           </Link>
           <h1 className="text-2xl font-bold mt-6">Welcome back</h1>
           <p className="text-muted mt-2">Sign in to continue your journey</p>

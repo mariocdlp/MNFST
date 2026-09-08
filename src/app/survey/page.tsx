@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/layout/navbar";
 import { Button } from "@/components/ui/button";
 import { StepIndicator } from "@/components/ui/progress";
-import { useSurveyStore, useAppStore } from "@/lib/store";
+import { useSurveyStore } from "@/lib/store";
 import { createClient } from "@/lib/supabase/client";
 import { Step1Identity } from "@/components/survey/step-1-identity";
 import { Step2Dream } from "@/components/survey/step-2-dream";
@@ -68,7 +68,6 @@ function validateStep(step: number, data: ReturnType<typeof useSurveyStore.getSt
 export default function SurveyPage() {
   const router = useRouter();
   const { currentStep, nextStep, prevStep, surveyData } = useSurveyStore();
-  const user = useAppStore((s) => s.user);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -97,40 +96,35 @@ export default function SurveyPage() {
         return;
       }
 
-      // Upload photos to Supabase storage
-      const photoUrls: string[] = [];
+      // Photos first — the generation pipeline needs a likeness reference, but a
+      // failed upload shouldn't cost the user their answers.
       const storeState = useSurveyStore.getState();
+      const photoUrls: string[] = [];
       for (const photo of storeState.uploadedPhotos) {
         const ext = photo.name.split(".").pop();
         const path = `${authUser.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("user-photos")
-          .upload(path, photo);
+        const { error: uploadError } = await supabase.storage.from("user-photos").upload(path, photo);
 
         if (uploadError) {
           console.error("Photo upload error:", uploadError);
           continue;
         }
 
-        const { data: urlData } = supabase.storage
-          .from("user-photos")
-          .getPublicUrl(path);
+        const { data: urlData } = supabase.storage.from("user-photos").getPublicUrl(path);
         photoUrls.push(urlData.publicUrl);
       }
 
-      // Save survey response
-      const { data: surveyResponse, error: surveyError } = await supabase
-        .from("survey_responses")
-        .insert({
-          user_id: authUser.id,
-          response_data: surveyData,
-        })
-        .select()
-        .single();
+      const response = await fetch("/api/survey", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ surveyData }),
+      });
 
-      if (surveyError) throw surveyError;
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error ?? "Could not save your answers");
+      }
 
-      // Save photo records
       for (let i = 0; i < photoUrls.length; i++) {
         const photoType = i === 0 ? "face_front" : i === 1 ? "face_angle" : "full_body";
         await supabase.from("user_photos").insert({
@@ -140,40 +134,14 @@ export default function SurveyPage() {
         });
       }
 
-      // Create video record
-      const { data: video, error: videoError } = await supabase
-        .from("videos")
-        .insert({
-          user_id: authUser.id,
-          survey_response_id: surveyResponse.id,
-          template_id: "universal_v1",
-          vibe_id: surveyData.visual_mood,
-          status: "queued",
-        })
-        .select()
-        .single();
+      // Personalized pieces are generated in the background; the action plan is
+      // the next thing the user should see.
+      fetch("/api/feed/refresh", { method: "POST" }).catch(() => {});
 
-      if (videoError) throw videoError;
-
-      // Deduct credit
-      if (user) {
-        await supabase
-          .from("profiles")
-          .update({
-            credits_remaining: Math.max(0, user.credits_remaining - 1),
-            credits_used: (user as { credits_used?: number }).credits_used
-              ? (user as { credits_used?: number }).credits_used! + 1
-              : 1,
-            last_credit_used_at: new Date().toISOString(),
-          })
-          .eq("id", authUser.id);
-      }
-
-      // Navigate to generation page
-      router.push(`/generate?videoId=${video.id}`);
+      router.push("/plan");
     } catch (err) {
       console.error("Submit error:", err);
-      setError("Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setSubmitting(false);
     }
   };
@@ -194,7 +162,7 @@ export default function SurveyPage() {
       <div className="max-w-2xl mx-auto px-4 pt-24 pb-16">
         {/* Progress */}
         <div className="mb-8 flex flex-col items-center gap-4">
-          <StepIndicator totalSteps={6} currentStep={currentStep} labels={stepLabels} />
+          <StepIndicator totalSteps={6} currentStep={currentStep} />
           <p className="text-sm text-muted">
             Step {currentStep} of 6: <span className="text-foreground">{stepLabels[currentStep - 1]}</span>
           </p>
@@ -245,7 +213,7 @@ export default function SurveyPage() {
             </Button>
           ) : (
             <Button onClick={handleSubmit} loading={submitting}>
-              Generate My Video
+              Build my feed
             </Button>
           )}
         </div>

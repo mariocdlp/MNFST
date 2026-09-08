@@ -2,7 +2,7 @@
 
 import { useSurveyStore } from "@/lib/store";
 import { motion } from "framer-motion";
-import type { VisualMood, VoicePreference, MusicEnergy } from "@/types";
+import type { VisualMood, VoicePreference, MusicEnergy, ContentLengthPref } from "@/types";
 
 const vibes: { value: VisualMood; name: string; desc: string; colors: string }[] = [
   {
@@ -31,6 +31,13 @@ const voiceOptions: { value: VoicePreference; label: string }[] = [
   { value: "none", label: "No narration (music + visuals only)" },
 ];
 
+const lengthOptions: { value: ContentLengthPref; label: string; desc: string }[] = [
+  { value: "quick", label: "Quick hits", desc: "Under a minute" },
+  { value: "medium", label: "Medium", desc: "One to three minutes" },
+  { value: "deep", label: "Deep dives", desc: "Three to ten minutes" },
+  { value: "mix", label: "A mix of all", desc: "Whatever fits the moment" },
+];
+
 const musicOptions: { value: MusicEnergy; label: string; desc: string }[] = [
   { value: "calm_ambient", label: "Calm & Ambient", desc: "Peaceful, meditative" },
   { value: "uplifting_emotional", label: "Uplifting & Emotional", desc: "Inspiring, warm" },
@@ -43,8 +50,10 @@ export function Step6Preferences() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold">Customize your experience</h2>
-        <p className="text-muted mt-1">Choose the visual and audio mood for your video.</p>
+        <h2 className="text-2xl font-bold">Shape your feed</h2>
+        <p className="text-muted mt-1">
+          How your content looks, sounds, and how long it asks of you.
+        </p>
       </div>
 
       {/* Visual mood / vibe selection */}
@@ -86,7 +95,7 @@ export function Step6Preferences() {
 
       {/* Voice preference */}
       <div className="space-y-3">
-        <label className="block text-sm font-medium text-foreground">Narration voice</label>
+        <label className="block text-sm font-medium text-foreground">Meditation voice</label>
         <div className="flex flex-wrap gap-2">
           {voiceOptions.map((opt) => (
             <motion.button
@@ -103,6 +112,33 @@ export function Step6Preferences() {
               `}
             >
               {opt.label}
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content length preference */}
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-foreground">
+          How long should your content be?
+        </label>
+        <div className="space-y-2">
+          {lengthOptions.map((opt) => (
+            <motion.button
+              key={opt.value}
+              type="button"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              onClick={() => updateSurvey({ content_length_pref: opt.value })}
+              className={`
+                w-full text-left px-4 py-3 rounded-xl border transition-all cursor-pointer
+                ${surveyData.content_length_pref === opt.value
+                  ? "bg-accent/10 border-accent text-foreground"
+                  : "bg-surface-light border-border text-muted hover:border-accent/30"}
+              `}
+            >
+              <span className="font-medium">{opt.label}</span>
+              <span className="text-xs text-muted ml-2">— {opt.desc}</span>
             </motion.button>
           ))}
         </div>
