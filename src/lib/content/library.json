@@ -38,7 +38,7 @@
       "music_bed": "ambient_warm"
     },
     "benefit_tag": "Activates reward circuitry",
-    "science_ref": "Gratitude and reward pathways (Zahn et al., 2008)",
+    "science_ref": "Gratitude engages the subgenual anterior cingulate (Zahn et al., 2009)",
     "method_tags": [
       "gratitude_neuroscience"
     ],
@@ -68,7 +68,7 @@
       "music_bed": "ambient_focus"
     },
     "benefit_tag": "Strengthens daily habits",
-    "science_ref": "Identity-based habits (Clear, 2018)",
+    "science_ref": "Identity-based habits (Clear, 2018); identity-framed language (Bryan et al., 2011)",
     "method_tags": [
       "identity_based_habits"
     ],
@@ -126,7 +126,7 @@
       "prompt": "Read it once. That's the whole practice."
     },
     "benefit_tag": "Strengthens implementation intentions",
-    "science_ref": "If-then planning (Gollwitzer, 1999 — 94 studies, d = .65)",
+    "science_ref": "If-then planning (Gollwitzer & Sheeran, 2006 — 94 independent tests, d = .65)",
     "method_tags": [
       "implementation_intentions"
     ],
@@ -778,7 +778,7 @@
       "music_bed": "ambient_dusk"
     },
     "benefit_tag": "Deepens identity shift",
-    "science_ref": "Identity-based habits (Clear, 2018)",
+    "science_ref": "Identity-based habits (Clear, 2018); identity-framed language (Bryan et al., 2011)",
     "method_tags": [
       "identity_based_habits",
       "self_affirmation"
@@ -861,7 +861,7 @@
       "music_bed": "alpha_10hz_deep"
     },
     "benefit_tag": "Deepens identity shift",
-    "science_ref": "Alpha-state visualization; mental contrasting (Oettingen, 2012); implementation intentions (Gollwitzer, 1999)",
+    "science_ref": "Alpha-state visualization; mental contrasting (Oettingen, 2012); implementation intentions (Gollwitzer & Sheeran, 2006)",
     "method_tags": [
       "silva_mirror_of_mind",
       "gratitude_neuroscience",
@@ -891,7 +891,7 @@
       "prompt": "It was true this morning. It's still true now."
     },
     "benefit_tag": "Activates reward circuitry",
-    "science_ref": "Gratitude and reward pathways (Zahn et al., 2008)",
+    "science_ref": "Gratitude engages the subgenual anterior cingulate (Zahn et al., 2009)",
     "method_tags": [
       "gratitude_neuroscience"
     ],
@@ -994,7 +994,7 @@
       "music_bed": "ambient_dusk"
     },
     "benefit_tag": "Strengthens implementation intentions",
-    "science_ref": "Precommitment (Rogers et al., 2015); if-then plans (Gollwitzer, 1999)",
+    "science_ref": "Precommitment (Rogers et al., 2014); if-then plans (Gollwitzer & Sheeran, 2006)",
     "method_tags": [
       "implementation_intentions"
     ],
@@ -1163,7 +1163,7 @@
       "music_bed": "alpha_10hz_ambient"
     },
     "benefit_tag": "Deepens identity shift",
-    "science_ref": "Mental rehearsal (Maltz, 1960); future self-continuity research",
+    "science_ref": "Mental rehearsal (Maltz, 1960); future self-continuity (Hershfield et al., 2011)",
     "method_tags": [
       "psycho_cybernetics_theater_of_mind",
       "mental_rehearsal",
@@ -1207,7 +1207,7 @@
       ]
     },
     "benefit_tag": "Deepens identity shift",
-    "science_ref": "Identity-based habits (Clear, 2018)",
+    "science_ref": "Identity-based habits (Clear, 2018); identity-framed language (Bryan et al., 2011)",
     "method_tags": [
       "identity_based_habits",
       "habit_loop"
@@ -1267,7 +1267,7 @@
       "music_bed": "ambient_focus"
     },
     "benefit_tag": "Rewires self-image",
-    "science_ref": "Identity-based habits (Clear, 2018)",
+    "science_ref": "Identity-based habits (Clear, 2018); identity-framed language (Bryan et al., 2011)",
     "method_tags": [
       "identity_based_habits",
       "psycho_cybernetics_self_image"
@@ -1291,7 +1291,7 @@
       "music_bed": "ambient_drive"
     },
     "benefit_tag": "Strengthens daily habits",
-    "science_ref": "Identity-based habits (Clear, 2018)",
+    "science_ref": "Identity-based habits (Clear, 2018); identity-framed language (Bryan et al., 2011)",
     "method_tags": [
       "identity_based_habits"
     ],
