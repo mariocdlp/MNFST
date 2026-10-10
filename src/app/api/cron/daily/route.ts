@@ -2,7 +2,7 @@
 // Schedule with Vercel Cron (vercel.json) or Cloud Scheduler
 // Run every hour — check which users need a notification at this time
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { format } from "date-fns";
 
 function verifyCronSecret(request: NextRequest): boolean {
@@ -15,10 +15,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = await createClient();
+  // Scheduled work spans every user, so it runs with the service role.
+  const supabase = createAdminClient();
   const currentHour = format(new Date(), "HH");
-  const currentMinute = format(new Date(), "mm");
-  const currentTime = `${currentHour}:${currentMinute}`;
 
   // Find users whose morning reminder time matches (within the current hour)
   const { data: morningUsers } = await supabase
@@ -34,7 +33,8 @@ export async function GET(request: NextRequest) {
     .eq("email_evening_checkin", true)
     .like("evening_checkin_time", `${currentHour}:%`);
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://mnfst.app";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
   const results = { morning: 0, evening: 0, errors: 0 };
 
   // Send morning reminders

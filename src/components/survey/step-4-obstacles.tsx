@@ -59,7 +59,7 @@ export function Step4Obstacles() {
         value={surveyData.limiting_belief}
         onChange={(e) => updateSurvey({ limiting_belief: e.target.value })}
         placeholder="Be honest — e.g., 'I'm not smart enough' or 'People like me don't get that'"
-        hint="This is the specific belief your video will help you confront"
+        hint="This is the specific belief your content will help you rewrite"
       />
 
       <ScienceTooltip

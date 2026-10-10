@@ -1,11 +1,11 @@
--- MNFST Database Schema
+-- IDSHIFT Database Schema
 -- Run this in the Supabase SQL Editor to set up the database
 
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
 -- Users profile table (extends Supabase auth.users)
-create table public.profiles (
+create table if not exists public.profiles (
   id uuid references auth.users on delete cascade primary key,
   email text not null,
   name text not null default '',
@@ -16,7 +16,7 @@ create table public.profiles (
 );
 
 -- Survey responses
-create table public.survey_responses (
+create table if not exists public.survey_responses (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid references public.profiles(id) on delete cascade not null,
   response_data jsonb not null,
@@ -24,7 +24,7 @@ create table public.survey_responses (
 );
 
 -- User photos for likeness generation
-create table public.user_photos (
+create table if not exists public.user_photos (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid references public.profiles(id) on delete cascade not null,
   photo_url text not null,
@@ -33,7 +33,7 @@ create table public.user_photos (
 );
 
 -- Generated videos
-create table public.videos (
+create table if not exists public.videos (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid references public.profiles(id) on delete cascade not null,
   survey_response_id uuid references public.survey_responses(id) on delete set null,
@@ -49,7 +49,7 @@ create table public.videos (
 );
 
 -- Action pledges
-create table public.action_pledges (
+create table if not exists public.action_pledges (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid references public.profiles(id) on delete cascade not null,
   video_id uuid references public.videos(id) on delete cascade not null,
@@ -60,7 +60,7 @@ create table public.action_pledges (
 );
 
 -- Daily action completions
-create table public.action_completions (
+create table if not exists public.action_completions (
   id uuid primary key default uuid_generate_v4(),
   pledge_id uuid references public.action_pledges(id) on delete cascade not null,
   date date not null,
@@ -71,7 +71,7 @@ create table public.action_completions (
 );
 
 -- Streak tracking
-create table public.streaks (
+create table if not exists public.streaks (
   user_id uuid references public.profiles(id) on delete cascade primary key,
   current_streak integer not null default 0,
   longest_streak integer not null default 0,
@@ -79,7 +79,7 @@ create table public.streaks (
 );
 
 -- Notifications
-create table public.notifications (
+create table if not exists public.notifications (
   id uuid primary key default uuid_generate_v4(),
   user_id uuid references public.profiles(id) on delete cascade not null,
   type text not null check (type in ('morning_reminder', 'evening_checkin', 'streak_milestone', 'weekly_summary', 'video_ready')),
@@ -90,7 +90,7 @@ create table public.notifications (
 );
 
 -- Notification preferences
-create table public.notification_preferences (
+create table if not exists public.notification_preferences (
   user_id uuid references public.profiles(id) on delete cascade primary key,
   morning_reminder_time time not null default '07:00',
   evening_checkin_time time not null default '20:00',
@@ -116,37 +116,58 @@ alter table public.notifications enable row level security;
 alter table public.notification_preferences enable row level security;
 
 -- Users can only access their own data
+drop policy if exists "Users can view own profile" on public.profiles;
 create policy "Users can view own profile" on public.profiles for select using (auth.uid() = id);
+drop policy if exists "Users can update own profile" on public.profiles;
 create policy "Users can update own profile" on public.profiles for update using (auth.uid() = id);
 
+drop policy if exists "Users can view own surveys" on public.survey_responses;
 create policy "Users can view own surveys" on public.survey_responses for select using (auth.uid() = user_id);
+drop policy if exists "Users can insert own surveys" on public.survey_responses;
 create policy "Users can insert own surveys" on public.survey_responses for insert with check (auth.uid() = user_id);
 
+drop policy if exists "Users can view own photos" on public.user_photos;
 create policy "Users can view own photos" on public.user_photos for select using (auth.uid() = user_id);
+drop policy if exists "Users can insert own photos" on public.user_photos;
 create policy "Users can insert own photos" on public.user_photos for insert with check (auth.uid() = user_id);
+drop policy if exists "Users can delete own photos" on public.user_photos;
 create policy "Users can delete own photos" on public.user_photos for delete using (auth.uid() = user_id);
 
+drop policy if exists "Users can view own videos" on public.videos;
 create policy "Users can view own videos" on public.videos for select using (auth.uid() = user_id);
+drop policy if exists "Users can insert own videos" on public.videos;
 create policy "Users can insert own videos" on public.videos for insert with check (auth.uid() = user_id);
 
+drop policy if exists "Users can view own pledges" on public.action_pledges;
 create policy "Users can view own pledges" on public.action_pledges for select using (auth.uid() = user_id);
+drop policy if exists "Users can insert own pledges" on public.action_pledges;
 create policy "Users can insert own pledges" on public.action_pledges for insert with check (auth.uid() = user_id);
+drop policy if exists "Users can update own pledges" on public.action_pledges;
 create policy "Users can update own pledges" on public.action_pledges for update using (auth.uid() = user_id);
 
+drop policy if exists "Users can view own completions" on public.action_completions;
 create policy "Users can view own completions" on public.action_completions for select
   using (exists (select 1 from public.action_pledges where id = pledge_id and user_id = auth.uid()));
+drop policy if exists "Users can insert own completions" on public.action_completions;
 create policy "Users can insert own completions" on public.action_completions for insert
   with check (exists (select 1 from public.action_pledges where id = pledge_id and user_id = auth.uid()));
+drop policy if exists "Users can update own completions" on public.action_completions;
 create policy "Users can update own completions" on public.action_completions for update
   using (exists (select 1 from public.action_pledges where id = pledge_id and user_id = auth.uid()));
 
+drop policy if exists "Users can view own streaks" on public.streaks;
 create policy "Users can view own streaks" on public.streaks for select using (auth.uid() = user_id);
+drop policy if exists "Users can manage own streaks" on public.streaks;
 create policy "Users can manage own streaks" on public.streaks for all using (auth.uid() = user_id);
 
+drop policy if exists "Users can view own notifications" on public.notifications;
 create policy "Users can view own notifications" on public.notifications for select using (auth.uid() = user_id);
+drop policy if exists "Users can update own notifications" on public.notifications;
 create policy "Users can update own notifications" on public.notifications for update using (auth.uid() = user_id);
 
+drop policy if exists "Users can view own prefs" on public.notification_preferences;
 create policy "Users can view own prefs" on public.notification_preferences for select using (auth.uid() = user_id);
+drop policy if exists "Users can manage own prefs" on public.notification_preferences;
 create policy "Users can manage own prefs" on public.notification_preferences for all using (auth.uid() = user_id);
 
 -- Function to create profile + defaults on signup
@@ -170,14 +191,14 @@ create or replace trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 
 -- Indexes for common queries
-create index idx_survey_responses_user on public.survey_responses(user_id);
-create index idx_videos_user on public.videos(user_id);
-create index idx_videos_status on public.videos(status);
-create index idx_action_pledges_user on public.action_pledges(user_id);
-create index idx_action_pledges_video on public.action_pledges(video_id);
-create index idx_action_completions_pledge on public.action_completions(pledge_id);
-create index idx_action_completions_date on public.action_completions(date);
-create index idx_notifications_user on public.notifications(user_id, is_read);
+create index if not exists idx_survey_responses_user on public.survey_responses(user_id);
+create index if not exists idx_videos_user on public.videos(user_id);
+create index if not exists idx_videos_status on public.videos(status);
+create index if not exists idx_action_pledges_user on public.action_pledges(user_id);
+create index if not exists idx_action_pledges_video on public.action_pledges(video_id);
+create index if not exists idx_action_completions_pledge on public.action_completions(pledge_id);
+create index if not exists idx_action_completions_date on public.action_completions(date);
+create index if not exists idx_notifications_user on public.notifications(user_id, is_read);
 
 -- Storage bucket for user photos (configure in Supabase dashboard)
 -- insert into storage.buckets (id, name, public) values ('user-photos', 'user-photos', false);
