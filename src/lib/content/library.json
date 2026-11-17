@@ -63,7 +63,7 @@
     "type": "affirmation",
     "title": "Not a task — a description",
     "content_data": {
-      "affirmation": "Every day I {{daily_habit}}, because that's who I am.",
+      "affirmation": "Every day: {{daily_habit}}. Because that's who I am.",
       "text": "You're not trying to do this. You're someone who does this.",
       "music_bed": "ambient_focus"
     },
@@ -926,7 +926,7 @@
           "text": "One kept promise is evidence. One recovery after skipping is stronger evidence."
         },
         {
-          "text": "You did {{daily_habit}} — or you didn't, and you're still here reading this. Both count for something."
+          "text": "{{daily_habit}} — you did it today, or you didn't, and you're still here reading this. Both count for something."
         },
         {
           "text": "Write down the single piece of evidence today produced. Tomorrow starts from there."
