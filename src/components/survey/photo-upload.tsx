@@ -59,7 +59,7 @@ export function PhotoUpload() {
         <p className="text-xs text-muted leading-relaxed">
           <span className="font-medium text-accent">Photo tips:</span> Well-lit, clear face, no sunglasses.
           Include at least one front-facing photo, one at an angle, and one full body if possible.
-          These are used to create your personalized AI video.
+          These are used to place you inside your own content.
         </p>
       </div>
 

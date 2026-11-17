@@ -1,6 +1,6 @@
 // Cron job: Send weekly summary emails every Sunday
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { format, subDays } from "date-fns";
 
 function verifyCronSecret(request: NextRequest): boolean {
@@ -13,8 +13,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = await createClient();
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://mnfst.app";
+  // Scheduled work spans every user, so it runs with the service role.
+  const supabase = createAdminClient();
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
   // Get all users with weekly summary enabled
   const { data: prefUsers } = await supabase

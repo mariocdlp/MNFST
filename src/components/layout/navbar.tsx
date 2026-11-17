@@ -27,13 +27,19 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2">
-            <span className="text-xl font-bold gradient-text tracking-tight">MNFST</span>
+            <span className="text-xl font-bold gradient-text tracking-tight">IDSHIFT</span>
           </Link>
 
           {/* Right side */}
           <div className="flex items-center gap-3">
             {user ? (
               <>
+                <Link
+                  href="/feed"
+                  className="hidden px-3 py-1.5 text-sm text-muted transition-colors hover:text-foreground sm:inline"
+                >
+                  Feed
+                </Link>
                 {/* Notifications bell */}
                 <div className="relative">
                   <button
@@ -68,7 +74,14 @@ export function Navbar() {
                           notifications.slice(0, 10).map((n) => (
                             <button
                               key={n.id}
-                              onClick={() => markNotificationRead(n.id)}
+                              onClick={() => {
+                                markNotificationRead(n.id);
+                                fetch("/api/notifications", {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ id: n.id }),
+                                });
+                              }}
                               className={`w-full text-left p-3 border-b border-border/50 hover:bg-surface-light transition-colors cursor-pointer ${
                                 !n.is_read ? "bg-accent/5" : ""
                               }`}

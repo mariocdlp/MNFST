@@ -2,7 +2,7 @@
 // Manages survey form state, user session, and UI state
 
 import { create } from "zustand";
-import { type SurveyData, type User, type Video, type ActionPledge, type Streak, type Notification } from "@/types";
+import { type SurveyData, type User, type ActionPledge, type Streak, type Notification } from "@/types";
 
 // Default empty survey
 const emptySurvey: SurveyData = {
@@ -32,6 +32,7 @@ const emptySurvey: SurveyData = {
   visual_mood: "warm_cinematic",
   voice_pref: "female",
   music_energy: "uplifting_emotional",
+  content_length_pref: "mix",
 };
 
 interface SurveyStore {
@@ -72,13 +73,11 @@ export const useSurveyStore = create<SurveyStore>((set) => ({
 
 interface AppStore {
   user: User | null;
-  latestVideo: Video | null;
   pledges: ActionPledge[];
   streak: Streak | null;
   notifications: Notification[];
   unreadCount: number;
   setUser: (user: User | null) => void;
-  setLatestVideo: (video: Video | null) => void;
   setPledges: (pledges: ActionPledge[]) => void;
   setStreak: (streak: Streak | null) => void;
   setNotifications: (notifications: Notification[]) => void;
@@ -87,13 +86,11 @@ interface AppStore {
 
 export const useAppStore = create<AppStore>((set) => ({
   user: null,
-  latestVideo: null,
   pledges: [],
   streak: null,
   notifications: [],
   unreadCount: 0,
   setUser: (user) => set({ user }),
-  setLatestVideo: (video) => set({ latestVideo: video }),
   setPledges: (pledges) => set({ pledges }),
   setStreak: (streak) => set({ streak }),
   setNotifications: (notifications) =>

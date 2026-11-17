@@ -1,4 +1,4 @@
-// MNFST — Core type definitions
+// IDSHIFT — Core type definitions
 // All types map to the database schema and survey variable system
 
 export type GoalCategory =
@@ -16,7 +16,8 @@ export type DreamEmotion =
   | "love"
   | "relief"
   | "excitement"
-  | "gratitude";
+  | "gratitude"
+  | "confidence";
 
 export type Timeline = "3_months" | "6_months" | "1_year" | "3_years" | "5_years";
 
@@ -37,7 +38,8 @@ export type VisualMood = "warm_cinematic" | "clean_modern" | "dark_dramatic";
 export type VoicePreference = "male" | "female" | "none";
 export type MusicEnergy = "calm_ambient" | "uplifting_emotional" | "powerful_driving";
 
-export type VideoStatus = "queued" | "generating" | "completed" | "failed";
+export type ContentLengthPref = "quick" | "medium" | "deep" | "mix";
+
 export type ActionType = "daily_habit" | "if_then_plan" | "first_step";
 export type CompletionStatus = "done" | "skipped" | "partial";
 export type NotificationType =
@@ -45,7 +47,9 @@ export type NotificationType =
   | "evening_checkin"
   | "streak_milestone"
   | "weekly_summary"
-  | "video_ready";
+  | "content_ready"
+  | "meditation_ready"
+  | "nudge";
 
 // Survey response data — all 22+ fields from the intake form
 export interface SurveyData {
@@ -86,6 +90,7 @@ export interface SurveyData {
   visual_mood: VisualMood;
   voice_pref: VoicePreference;
   music_energy: MusicEnergy;
+  content_length_pref: ContentLengthPref;
 }
 
 export interface User {
@@ -111,24 +116,10 @@ export interface UserPhoto {
   uploaded_at: string;
 }
 
-export interface Video {
-  id: string;
-  user_id: string;
-  survey_response_id: string;
-  template_id: string;
-  vibe_id: string;
-  status: VideoStatus;
-  video_url: string | null;
-  thumbnail_url: string | null;
-  generation_started_at: string | null;
-  generation_completed_at: string | null;
-  created_at: string;
-}
-
 export interface ActionPledge {
   id: string;
   user_id: string;
-  video_id: string;
+  survey_response_id: string | null;
   action_type: ActionType;
   action_text: string;
   pledged_at: string;
@@ -168,11 +159,12 @@ export interface NotificationPreferences {
   email_morning_reminder: boolean;
   email_evening_checkin: boolean;
   email_weekly_summary: boolean;
-  email_video_ready: boolean;
+  email_content_ready: boolean;
   in_app_morning_reminder: boolean;
   in_app_evening_checkin: boolean;
   in_app_streak_milestone: boolean;
   in_app_weekly_summary: boolean;
+  in_app_content_ready: boolean;
 }
 
 // Pronoun helper derived from gender
@@ -193,3 +185,195 @@ export function getSubjectPronoun(gender: Gender): string {
     default: return "they";
   }
 }
+
+// ---------------------------------------------------------------------------
+// Content system
+// ---------------------------------------------------------------------------
+
+export type ContentFormat = "image" | "carousel" | "video" | "meditation" | "affirmation";
+export type Intensity = "gentle" | "moderate" | "intense";
+export type TimeOfDay = "morning" | "midday" | "evening";
+export type TimeAffinity = TimeOfDay | "any";
+export type ContentSource = "library" | "generated";
+export type GenerationStatus = "queued" | "generating" | "ready" | "failed";
+
+// Internal methodology tags — never rendered to the user. They exist so the
+// feed can balance which technique a user is being served, and so generated
+// content can be traced back to the method it draws from.
+export type MethodTag =
+  | "silva_mirror_of_mind"
+  | "psycho_cybernetics_self_image"
+  | "psycho_cybernetics_theater_of_mind"
+  | "woop_mental_contrasting"
+  | "implementation_intentions"
+  | "identity_based_habits"
+  | "habit_loop"
+  | "gratitude_neuroscience"
+  | "mental_rehearsal"
+  | "self_affirmation"
+  | "self_efficacy";
+
+// User-facing benefit labels — always visible on the card.
+export type BenefitTag =
+  | "Rewires self-image"
+  | "Builds neural pathways"
+  | "Strengthens daily habits"
+  | "Activates reward circuitry"
+  | "Reframes limiting beliefs"
+  | "Deepens identity shift"
+  | "Primes subconscious mind"
+  | "Strengthens implementation intentions"
+  | "Builds self-efficacy"
+  | "Activates mental rehearsal";
+
+export interface CarouselSlide {
+  text: string;
+  caption?: string;
+  image_url?: string;
+  image_prompt?: string;
+}
+
+// Shape of content_data, by format. Every field is optional at the type level
+// because a single JSONB column carries all five formats.
+export interface ContentData {
+  /** image, video, meditation: headline rendered over the media */
+  text?: string;
+  /** affirmation: the line the user repeats */
+  affirmation?: string;
+  /** carousel */
+  slides?: CarouselSlide[];
+  /** image / video poster */
+  image_url?: string;
+  image_prompt?: string;
+  video_url?: string;
+  audio_url?: string;
+  /** meditation: which protocol sections this piece runs */
+  sections?: MeditationSection[];
+  /** meditation: the same sections, personalized and timed at read time */
+  sections_detail?: MeditationSectionDetail[];
+  /** evening reflection prompt shown under the content */
+  prompt?: string;
+  /** ambient bed for meditation + affirmation audio */
+  music_bed?: string;
+}
+
+export interface MeditationSectionDetail {
+  id: MeditationSection;
+  label: string;
+  guidance: string;
+  seconds: number;
+}
+
+export type MeditationSection =
+  | "induction"
+  | "gratitude_priming"
+  | "identity_visualization"
+  | "mental_contrasting"
+  | "action_rehearsal"
+  | "integration";
+
+export interface ContentLibraryItem {
+  id: string;
+  type: ContentFormat;
+  title: string;
+  content_data: ContentData;
+  benefit_tag: BenefitTag;
+  science_ref: string;
+  method_tags: MethodTag[];
+  goal_categories: GoalCategory[];
+  personalization_variables: string[];
+  intensity: Intensity;
+  time_of_day_affinity: TimeAffinity;
+  duration_seconds: number | null;
+  is_premium: boolean;
+}
+
+export interface GeneratedContent {
+  id: string;
+  user_id: string;
+  type: ContentFormat;
+  title: string;
+  content_data: ContentData;
+  generation_prompt: Record<string, unknown>;
+  benefit_tag: BenefitTag;
+  science_ref: string;
+  method_tags: MethodTag[];
+  status: GenerationStatus;
+  source: "system_generated" | "user_created";
+  credits_spent: number;
+  duration_seconds: number | null;
+  created_at: string;
+}
+
+export interface UserFeedRow {
+  id: string;
+  user_id: string;
+  content_source: ContentSource;
+  library_content_id: string | null;
+  generated_content_id: string | null;
+  time_slot: TimeAffinity;
+  feed_date: string;
+  position: number;
+  served_at: string;
+  viewed: boolean;
+  viewed_at: string | null;
+  saved: boolean;
+  completed: boolean;
+}
+
+// What the feed API hands the client: one resolved, personalized card.
+export interface FeedCard {
+  /** user_feed row id, null for a preview that was never persisted */
+  feed_id: string | null;
+  content_id: string;
+  source: ContentSource;
+  type: ContentFormat;
+  title: string;
+  content_data: ContentData;
+  benefit_tag: BenefitTag;
+  science_ref: string;
+  goal_categories: GoalCategory[];
+  intensity: Intensity;
+  time_slot: TimeAffinity;
+  duration_seconds: number | null;
+  viewed: boolean;
+  saved: boolean;
+  completed: boolean;
+}
+
+export interface UserMeditation {
+  id: string;
+  user_id: string;
+  generated_content_id: string | null;
+  title: string;
+  audio_url: string | null;
+  duration_seconds: number;
+  focus_area: string;
+  mood: string;
+  created_at: string;
+  listen_count: number;
+  last_listened_at: string | null;
+}
+
+export interface CreditTransaction {
+  id: string;
+  user_id: string;
+  amount: number;
+  reason: "signup_bonus" | "meditation_created" | "purchase" | "refund";
+  created_at: string;
+}
+
+export const GOAL_CATEGORY_LABELS: Record<GoalCategory, string> = {
+  career_money: "Career & Money",
+  health_fitness: "Health & Fitness",
+  love_relationships: "Love & Relationships",
+  creative_purpose: "Creative & Purpose",
+};
+
+// How long a card should feel, per the user's length preference.
+export const LENGTH_PREF_SECONDS: Record<ContentLengthPref, [number, number]> = {
+  quick: [0, 60],
+  medium: [60, 180],
+  deep: [180, 600],
+  mix: [0, 600],
+};

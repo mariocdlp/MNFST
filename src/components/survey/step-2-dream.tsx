@@ -25,6 +25,7 @@ const emotionOptions: { value: DreamEmotion; label: string }[] = [
   { value: "relief", label: "Relief" },
   { value: "excitement", label: "Excitement" },
   { value: "gratitude", label: "Gratitude" },
+  { value: "confidence", label: "Confidence" },
 ];
 
 const timelineOptions = [

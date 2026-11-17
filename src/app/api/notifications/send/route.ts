@@ -1,5 +1,6 @@
-// API: Send email notifications via Resend
-// Called by cron jobs / scheduled functions for morning/evening/weekly emails
+// API: send email notifications via Resend.
+// Called by the cron routes for morning nudges, evening check-ins and summaries.
+// Every nudge leads with identity, not with the task — that framing is the point.
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
     switch (type) {
       case "morning_reminder": {
         await resend.emails.send({
-          from: process.env.EMAIL_FROM ?? "MNFST <noreply@mnfst.app>",
+          from: process.env.EMAIL_FROM ?? "IDSHIFT <noreply@idshift.app>",
           to: email,
           subject: `Good morning, ${name}. Time to show up.`,
           html: morningReminderTemplate({ name, ...data }),
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
       }
       case "evening_checkin": {
         await resend.emails.send({
-          from: process.env.EMAIL_FROM ?? "MNFST <noreply@mnfst.app>",
+          from: process.env.EMAIL_FROM ?? "IDSHIFT <noreply@idshift.app>",
           to: email,
           subject: `How did today go, ${name}?`,
           html: eveningCheckinTemplate({ name, ...data }),
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
       }
       case "weekly_summary": {
         await resend.emails.send({
-          from: process.env.EMAIL_FROM ?? "MNFST <noreply@mnfst.app>",
+          from: process.env.EMAIL_FROM ?? "IDSHIFT <noreply@idshift.app>",
           to: email,
           subject: `Your week in review, ${name}`,
           html: weeklySummaryTemplate({ name, ...data }),
@@ -53,19 +54,19 @@ export async function POST(request: NextRequest) {
       }
       case "welcome": {
         await resend.emails.send({
-          from: process.env.EMAIL_FROM ?? "MNFST <noreply@mnfst.app>",
+          from: process.env.EMAIL_FROM ?? "IDSHIFT <noreply@idshift.app>",
           to: email,
-          subject: `Welcome to MNFST, ${name}`,
+          subject: `Welcome to IDSHIFT, ${name}`,
           html: welcomeTemplate({ name }),
         });
         break;
       }
-      case "video_ready": {
+      case "content_ready": {
         await resend.emails.send({
-          from: process.env.EMAIL_FROM ?? "MNFST <noreply@mnfst.app>",
+          from: process.env.EMAIL_FROM ?? "IDSHIFT <noreply@idshift.app>",
           to: email,
-          subject: `Your video is ready, ${name}`,
-          html: videoReadyTemplate({ name, videoId: data.videoId }),
+          subject: `New in your feed, ${name}`,
+          html: contentReadyTemplate({ name, count: Number(data?.count ?? 1) }),
         });
         break;
       }
@@ -112,7 +113,7 @@ const buttonStyle = `
   margin-top: 24px;
 `;
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://mnfst.app";
+const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://idshift.app";
 
 function morningReminderTemplate({
   name,
@@ -130,7 +131,7 @@ function morningReminderTemplate({
   return `
     <body style="${baseStyle}">
       <div style="${cardStyle}">
-        <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: #a78bfa; margin: 0 0 20px;">MNFST</p>
+        <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: #a78bfa; margin: 0 0 20px;">IDSHIFT</p>
         <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 8px;">Good morning, ${name}.</h1>
         <p style="color: #8888a0; margin: 0 0 24px;">A reminder of who you are.</p>
         <p style="font-size: 18px; font-style: italic; border-left: 3px solid #a78bfa; padding-left: 16px; margin: 0 0 24px;">
@@ -166,7 +167,7 @@ function eveningCheckinTemplate({
   return `
     <body style="${baseStyle}">
       <div style="${cardStyle}">
-        <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: #a78bfa; margin: 0 0 20px;">MNFST</p>
+        <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: #a78bfa; margin: 0 0 20px;">IDSHIFT</p>
         <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 8px;">How did today go, ${name}?</h1>
         <p style="color: #8888a0; margin: 0 0 24px;">Take a moment to reflect on your commitments.</p>
         <p style="font-weight: 600; margin: 0 0 12px;">Today&rsquo;s pledges:</p>
@@ -193,7 +194,7 @@ function weeklySummaryTemplate({
   return `
     <body style="${baseStyle}">
       <div style="${cardStyle}">
-        <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: #a78bfa; margin: 0 0 20px;">MNFST — Weekly Summary</p>
+        <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: #a78bfa; margin: 0 0 20px;">IDSHIFT — Weekly Summary</p>
         <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 24px;">Your week in review, ${name}</h1>
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
           <div style="text-align: center; padding: 16px; background: rgba(167,139,250,0.1); border-radius: 12px;">
@@ -225,13 +226,13 @@ function welcomeTemplate({ name }: { name: string }) {
   return `
     <body style="${baseStyle}">
       <div style="${cardStyle}">
-        <p style="font-size: 24px; font-weight: 700; color: #a78bfa; margin: 0 0 24px;">MNFST</p>
+        <p style="font-size: 24px; font-weight: 700; color: #a78bfa; margin: 0 0 24px;">IDSHIFT</p>
         <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 8px;">Welcome, ${name}.</h1>
         <p style="color: #8888a0; margin: 0 0 24px; line-height: 1.6;">
-          You&rsquo;ve taken the first step. MNFST is a science-backed tool for turning vision into reality — through personalized video, daily pledges, and habit tracking.
+          You&rsquo;ve taken the first step. IDSHIFT is a science-backed tool for becoming the person who has already done it — through a personalized daily feed, custom meditations, and commitments you actually keep.
         </p>
         <p style="color: #8888a0; margin: 0 0 24px; line-height: 1.6;">
-          You have <strong style="color: #f0f0f5;">3 free video credits</strong> waiting. It takes about 5 minutes to complete your intake survey. Then we&rsquo;ll generate your personalized manifestation video.
+          You have <strong style="color: #f0f0f5;">5 free meditation credits</strong> waiting. The intake takes about five minutes, and your feed is built the moment you finish it.
         </p>
         <a href="${appUrl}/survey" style="${buttonStyle}">Start Your Survey</a>
       </div>
@@ -239,19 +240,16 @@ function welcomeTemplate({ name }: { name: string }) {
   `;
 }
 
-function videoReadyTemplate({ name, videoId }: { name: string; videoId: string }) {
+function contentReadyTemplate({ name, count }: { name: string; count: number }) {
   return `
     <body style="${baseStyle}">
       <div style="${cardStyle}">
-        <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: #a78bfa; margin: 0 0 20px;">MNFST</p>
-        <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 8px;">Your video is ready, ${name}.</h1>
+        <p style="font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; color: #a78bfa; margin: 0 0 20px;">IDSHIFT</p>
+        <h1 style="font-size: 22px; font-weight: 700; margin: 0 0 8px;">${count} new ${count === 1 ? "piece" : "pieces"}, ${name}.</h1>
         <p style="color: #8888a0; margin: 0 0 24px; line-height: 1.6;">
-          Your personalized manifestation video has been generated. Find a quiet moment, put on headphones, and watch it start to finish without interruption.
+          Made from your own answers this morning. A couple of minutes is enough — the point is that you see it, not that you finish it.
         </p>
-        <p style="color: #8888a0; margin: 0 0 24px; font-size: 14px;">
-          After watching, you&rsquo;ll create your action plan and pledge to specific daily commitments.
-        </p>
-        <a href="${appUrl}/watch/${videoId}" style="${buttonStyle}">Watch Your Video</a>
+        <a href="${appUrl}/feed" style="${buttonStyle}">Open your feed</a>
       </div>
     </body>
   `;

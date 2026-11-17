@@ -1,47 +1,66 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Navbar } from "@/components/layout/navbar";
-
-import type { Variants } from "framer-motion";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
+  visible: (index: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.15, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { delay: index * 0.15, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] },
   }),
 };
 
-const scienceSections = [
+const steps = [
   {
-    title: "Mental Rehearsal",
-    desc: "Vivid visualization produces the same neural changes as physical practice.",
-    citation: "Pascual-Leone et al., 1995",
+    num: "01",
+    title: "Tell us who you're becoming",
+    desc: "A six-step intake: the life, the scene, what's in the way, and the one habit that changes it.",
   },
   {
-    title: "Mental Contrasting",
-    desc: "Combining dreams with obstacle awareness dramatically increases follow-through.",
-    citation: "Oettingen, WOOP Method, 2012",
+    num: "02",
+    title: "Open your feed",
+    desc: "Images, carousels, meditations and affirmations — chosen for your goals and the time of day, written in your own words.",
   },
   {
-    title: "Identity-Based Habits",
-    desc: "Every action is a vote for the type of person you wish to become.",
-    citation: "James Clear, Atomic Habits, 2018",
-  },
-  {
-    title: "Implementation Intentions",
-    desc: "Specific if-then plans increase goal attainment by 65%.",
-    citation: "Gollwitzer, 1999 — meta-analysis, d=.65",
+    num: "03",
+    title: "Commit, and keep the count",
+    desc: "Pledge to your daily action, get nudged at your own trigger time, and watch the streak build.",
   },
 ];
 
-const steps = [
-  { num: "01", title: "Tell us your dream", desc: "A guided intake captures your goals, identity, and vision in vivid detail." },
-  { num: "02", title: "We create your video", desc: "AI generates a personalized 4-minute cinematic experience with you as the main character." },
-  { num: "03", title: "Pledge & track", desc: "Commit to daily actions derived from your goals. We remind you and track your streak." },
+const science = [
+  {
+    title: "Mental rehearsal",
+    desc: "Imagined practice produced the same cortical change as physical practice in a five-day study.",
+    citation: "Pascual-Leone et al., 1995",
+  },
+  {
+    title: "Mental contrasting",
+    desc: "Positive visualization alone lowers follow-through. Pairing it with the obstacle is what restores it.",
+    citation: "Oettingen, 2012",
+  },
+  {
+    title: "Identity-based habits",
+    desc: "Behaviour follows self-image. Every action is a vote for the type of person you're becoming.",
+    citation: "Clear, 2018",
+  },
+  {
+    title: "Implementation intentions",
+    desc: "If-then plans raised goal attainment with a medium-to-large effect across 94 studies.",
+    citation: "Gollwitzer, 1999 — d = .65",
+  },
+];
+
+const benefits = [
+  "Rewires self-image",
+  "Builds neural pathways",
+  "Strengthens daily habits",
+  "Activates reward circuitry",
+  "Reframes limiting beliefs",
+  "Strengthens implementation intentions",
 ];
 
 export default function LandingPage() {
@@ -49,23 +68,24 @@ export default function LandingPage() {
     <div className="min-h-screen">
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 pt-16 overflow-hidden">
-        {/* Background gradient orbs */}
+      <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 pt-16">
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl breathing" />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl breathing" style={{ animationDelay: "2.5s" }} />
+          <div className="breathing absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-accent/10 blur-3xl" />
+          <div
+            className="breathing absolute bottom-1/4 right-1/4 h-80 w-80 rounded-full bg-purple-500/10 blur-3xl"
+            style={{ animationDelay: "2.5s" }}
+          />
         </div>
 
-        <div className="relative z-10 max-w-3xl mx-auto text-center">
+        <div className="relative z-10 mx-auto max-w-3xl text-center">
           <motion.p
             custom={0}
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="text-sm uppercase tracking-[0.2em] text-accent mb-6"
+            className="mb-6 text-sm uppercase tracking-[0.2em] text-accent"
           >
-            Science-backed manifestation
+            Science-backed identity shift
           </motion.p>
 
           <motion.h1
@@ -73,11 +93,11 @@ export default function LandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight tracking-tight"
+            className="text-4xl font-bold leading-tight tracking-tight sm:text-6xl lg:text-7xl"
           >
-            See your future.
+            Become the person
             <br />
-            <span className="gradient-text">Build it today.</span>
+            <span className="gradient-text">who already did it.</span>
           </motion.h1>
 
           <motion.p
@@ -85,9 +105,11 @@ export default function LandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="mt-6 text-lg sm:text-xl text-muted max-w-xl mx-auto leading-relaxed"
+            className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted sm:text-xl"
           >
-            MNFST creates a personalized AI video where you&apos;re the main character — achieving your dream, confronting obstacles, and stepping into your future identity.
+            IDSHIFT builds you a daily feed that moves your self-image — and a pledge system that
+            turns it into behaviour. Every piece is tagged with what it does for you, and why the
+            research says it works.
           </motion.p>
 
           <motion.div
@@ -95,19 +117,19 @@ export default function LandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
+            className="mt-10 flex flex-col justify-center gap-4 sm:flex-row"
           >
             <Link
               href="/auth/signup"
-              className="px-8 py-4 rounded-xl bg-accent hover:bg-accent-dark text-white text-lg font-medium transition-colors glow"
+              className="glow rounded-xl bg-accent px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-accent-dark"
             >
-              Create Your Video
+              Start your shift
             </Link>
             <a
               href="#how-it-works"
-              className="px-8 py-4 rounded-xl border border-border text-muted hover:text-foreground hover:border-accent/50 text-lg transition-colors"
+              className="rounded-xl border border-border px-8 py-4 text-lg text-muted transition-colors hover:border-accent/50 hover:text-foreground"
             >
-              Learn More
+              How it works
             </a>
           </motion.div>
 
@@ -118,153 +140,133 @@ export default function LandingPage() {
             variants={fadeUp}
             className="mt-6 text-sm text-muted/60"
           >
-            3 free videos. No credit card required.
+            Free to start. No card required.
           </motion.p>
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="how-it-works" className="py-24 px-4">
-        <div className="max-w-5xl mx-auto">
+      <section id="how-it-works" className="px-4 py-24">
+        <div className="mx-auto max-w-5xl">
           <motion.h2
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl font-bold text-center mb-16"
+            className="mb-16 text-center text-3xl font-bold sm:text-4xl"
           >
             How it works
           </motion.h2>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {steps.map((step, i) => (
+          <div className="grid gap-8 md:grid-cols-3">
+            {steps.map((step, index) => (
               <motion.div
                 key={step.num}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="relative p-8 rounded-2xl bg-surface border border-border"
+                transition={{ delay: index * 0.15 }}
+                className="rounded-2xl border border-border bg-surface p-8"
               >
                 <span className="text-5xl font-bold text-accent/20">{step.num}</span>
-                <h3 className="text-xl font-semibold mt-3">{step.title}</h3>
-                <p className="text-muted mt-2 leading-relaxed">{step.desc}</p>
+                <h3 className="mt-3 text-xl font-semibold">{step.title}</h3>
+                <p className="mt-2 leading-relaxed text-muted">{step.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Science section */}
-      <section className="py-24 px-4 bg-surface/50">
-        <div className="max-w-5xl mx-auto">
+      <section className="bg-surface/50 px-4 py-24">
+        <div className="mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="mb-16 text-center"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold">
-              Built on <span className="gradient-text">real science</span>
+            <h2 className="text-3xl font-bold sm:text-4xl">
+              Built on <span className="gradient-text">real research</span>
             </h2>
-            <p className="mt-4 text-muted max-w-2xl mx-auto">
-              Every feature traces back to peer-reviewed research. This isn&apos;t generic self-help — it&apos;s a structured protocol.
+            <p className="mx-auto mt-4 max-w-2xl text-muted">
+              This isn&apos;t manifestation. Every feature traces to a published finding, and every
+              piece of content tells you which one.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {scienceSections.map((item, i) => (
+          <div className="grid gap-6 md:grid-cols-2">
+            {science.map((item, index) => (
               <motion.div
                 key={item.title}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="p-6 rounded-2xl bg-surface border border-border"
+                transition={{ delay: index * 0.1 }}
+                className="rounded-2xl border border-border bg-surface p-6"
               >
                 <h3 className="text-lg font-semibold text-accent">{item.title}</h3>
-                <p className="text-muted mt-2">{item.desc}</p>
-                <p className="text-xs text-muted/50 mt-3">{item.citation}</p>
+                <p className="mt-2 text-muted">{item.desc}</p>
+                <p className="mt-3 text-xs text-muted/50">{item.citation}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Video protocol section */}
-      <section className="py-24 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold">
-              Your 4-minute protocol
-            </h2>
-            <p className="mt-4 text-muted max-w-xl mx-auto">
-              Six scientifically structured phases take you from relaxation through visualization to committed action.
+      <section className="px-4 py-24">
+        <div className="mx-auto max-w-3xl text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h2 className="text-3xl font-bold sm:text-4xl">Every piece tells you what it does</h2>
+            <p className="mx-auto mt-4 max-w-xl text-muted">
+              No mystique, no method names to memorize. Just the benefit on the card and the
+              citation one tap away.
             </p>
           </motion.div>
 
-          <div className="mt-12 space-y-4">
-            {[
-              { phase: "Alpha Induction", time: "0:00", desc: "Binaural beats guide your brain into a receptive alpha state" },
-              { phase: "Gratitude Priming", time: "0:35", desc: "Activate your brain's reward circuitry through specific appreciation" },
-              { phase: "Dream Realized", time: "1:05", desc: "See yourself achieving your goal — you're the main character" },
-              { phase: "Mental Contrasting", time: "2:05", desc: "Honestly confront obstacles to supercharge motivation" },
-              { phase: "Identity & Action", time: "2:35", desc: "Declare who you're becoming and watch yourself build habits" },
-              { phase: "Integration", time: "3:40", desc: "Anchor your vision and commit to your first step today" },
-            ].map((phase, i) => (
-              <motion.div
-                key={phase.phase}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            {benefits.map((benefit, index) => (
+              <motion.span
+                key={benefit}
+                initial={{ opacity: 0, scale: 0.96 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="flex items-start gap-4 text-left p-4 rounded-xl hover:bg-surface/50 transition-colors"
+                transition={{ delay: index * 0.06 }}
+                className="rounded-full bg-accent/10 px-4 py-2 text-sm text-accent-light"
               >
-                <span className="text-xs text-accent font-mono mt-1 w-10 shrink-0">{phase.time}</span>
-                <div>
-                  <h4 className="font-semibold">{phase.phase}</h4>
-                  <p className="text-sm text-muted mt-0.5">{phase.desc}</p>
-                </div>
-              </motion.div>
+                {benefit}
+              </motion.span>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold">
-              Ready to meet your future self?
+      <section className="px-4 py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <h2 className="text-3xl font-bold sm:text-4xl">
+              Who do you need to become?
             </h2>
             <p className="mt-4 text-muted">
-              It takes 5 minutes to tell us your dream. We&apos;ll show you the path.
+              Five minutes of honest answers, and your feed is waiting.
             </p>
             <Link
               href="/auth/signup"
-              className="inline-block mt-8 px-8 py-4 rounded-xl bg-accent hover:bg-accent-dark text-white text-lg font-medium transition-colors glow"
+              className="glow mt-8 inline-block rounded-xl bg-accent px-8 py-4 text-lg font-medium text-white transition-colors hover:bg-accent-dark"
             >
-              Start Your Journey
+              Begin
             </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8 px-4">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-sm text-muted">MNFST — Science-backed manifestation</span>
+      <footer className="border-t border-border px-4 py-8">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 sm:flex-row">
+          <span className="text-sm text-muted">IDSHIFT — science-backed identity shift</span>
           <div className="flex gap-6 text-sm text-muted">
-            <Link href="/auth/login" className="hover:text-foreground transition-colors">Sign In</Link>
-            <Link href="/auth/signup" className="hover:text-foreground transition-colors">Get Started</Link>
+            <Link href="/auth/login" className="transition-colors hover:text-foreground">
+              Sign in
+            </Link>
+            <Link href="/auth/signup" className="transition-colors hover:text-foreground">
+              Get started
+            </Link>
           </div>
         </div>
       </footer>

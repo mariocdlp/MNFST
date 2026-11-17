@@ -1,12 +1,14 @@
 {
-  "name": "mnfst-app",
+  "name": "idshift",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:sql": "node scripts/generate-content-seed.mjs",
+    "seed:content": "node scripts/seed-content.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.2",

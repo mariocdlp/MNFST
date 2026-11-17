@@ -19,7 +19,7 @@ export function Step1Identity() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Who are you?</h2>
-        <p className="text-muted mt-1">Let&apos;s start with the basics. This helps us personalize every moment of your video.</p>
+        <p className="text-muted mt-1">Let&apos;s start with the basics. Every answer shapes what shows up in your feed.</p>
       </div>
 
       <Input
@@ -27,7 +27,7 @@ export function Step1Identity() {
         value={surveyData.first_name}
         onChange={(e) => updateSurvey({ first_name: e.target.value })}
         placeholder="Your first name"
-        hint="Used throughout your video narration"
+        hint="Used throughout your content and meditations"
       />
 
       <PhotoUpload />
@@ -46,7 +46,7 @@ export function Step1Identity() {
         value={surveyData.occupation}
         onChange={(e) => updateSurvey({ occupation: e.target.value })}
         placeholder="e.g., Software engineer, college student, freelance writer"
-        hint="Helps us set realistic scenes in your video"
+        hint="Helps us set scenes that look like your actual life"
       />
 
       <Select

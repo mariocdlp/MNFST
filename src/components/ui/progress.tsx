@@ -33,10 +33,9 @@ export function ProgressBar({ value, className = "", showLabel = false, shimmer 
 interface StepIndicatorProps {
   totalSteps: number;
   currentStep: number;
-  labels?: string[];
 }
 
-export function StepIndicator({ totalSteps, currentStep, labels }: StepIndicatorProps) {
+export function StepIndicator({ totalSteps, currentStep }: StepIndicatorProps) {
   return (
     <div className="flex items-center gap-2">
       {Array.from({ length: totalSteps }, (_, i) => {
